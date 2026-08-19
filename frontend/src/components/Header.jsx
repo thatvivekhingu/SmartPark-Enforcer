@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { ShieldAlert, Radio, Cpu, Clock } from 'lucide-react'
+import { ShieldAlert, Activity, Clock, Wifi, Zap } from 'lucide-react'
 
 function LiveClock() {
-  const [time, setTime] = useState(new Date())
-  useEffect(() => {
-    const t = setInterval(() => setTime(new Date()), 1000)
-    return () => clearInterval(t)
-  }, [])
-  const fmt = (n) => String(n).padStart(2, '0')
+  const [t, setT] = useState(new Date())
+  useEffect(() => { const id = setInterval(() => setT(new Date()), 1000); return () => clearInterval(id) }, [])
+  const p = n => String(n).padStart(2, '0')
   return (
-    <span className="font-mono text-[13px] text-slate-300 tabular-nums tracking-wider">
-      {fmt(time.getHours())}:{fmt(time.getMinutes())}:{fmt(time.getSeconds())}
-      <span className="text-slate-500 ml-1 text-[11px]">
-        {time.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })}
+    <span className="font-mono text-[13px] tabular-nums" style={{ color: '#FBBF24', letterSpacing: '0.05em' }}>
+      {p(t.getHours())}:{p(t.getMinutes())}:{p(t.getSeconds())}
+      <span className="ml-2 text-[11px]" style={{ color: '#52525B' }}>
+        {t.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
       </span>
     </span>
   )
@@ -20,74 +17,94 @@ function LiveClock() {
 
 export default function Header() {
   return (
-    <header
-      className="sticky top-0 z-50 flex items-center justify-between px-6 py-0 border-b"
-      style={{
-        background: 'linear-gradient(180deg, #0B0F17 0%, #0E1420 100%)',
-        borderColor: 'rgba(255,255,255,0.07)',
-        height: '60px',
-      }}
-    >
-      {/* Left — Logo + Breadcrumb */}
-      <div className="flex items-center gap-4">
-        <div
-          className="flex items-center justify-center w-9 h-9 rounded-lg"
-          style={{ background: 'linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%)' }}
-        >
-          <ShieldAlert className="w-5 h-5 text-white" strokeWidth={1.8} />
+    <header style={{
+      background: 'linear-gradient(180deg, #111113 0%, #0C0C0E 100%)',
+      borderBottom: '1px solid rgba(245,158,11,0.12)',
+      height: 58,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '0 24px',
+      position: 'sticky',
+      top: 0,
+      zIndex: 50,
+    }}>
+      {/* Left: Logo + Title */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        {/* Logo mark */}
+        <div style={{
+          width: 36, height: 36,
+          borderRadius: 8,
+          background: 'linear-gradient(135deg, #451A03 0%, #D97706 100%)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 0 16px rgba(245,158,11,0.25)',
+          flexShrink: 0,
+        }}>
+          <ShieldAlert size={18} color="#FEF3C7" strokeWidth={2} />
         </div>
+
+        {/* Text */}
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[15px] font-semibold text-slate-50 tracking-tight">SmartPark-Enforcer</span>
-            <span className="text-slate-600 text-sm">/</span>
-            <span className="text-[13px] text-slate-400 font-medium">Command Center</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 15, fontWeight: 700, color: '#FAFAFA', letterSpacing: '-0.01em' }}>
+              SmartPark-Enforcer
+            </span>
+            <span style={{ fontSize: 11, color: '#52525B', fontWeight: 500 }}>·</span>
+            <span style={{ fontSize: 12, color: '#71717A', fontWeight: 500 }}>AI Command Center</span>
           </div>
-          <p className="text-[11px] text-slate-600 font-medium mt-0">
-            Automated No-Parking Geo-Fence &amp; Digital Challan System
-          </p>
+          <div style={{ fontSize: 10, color: '#3F3F46', fontWeight: 500, letterSpacing: '0.04em', marginTop: 1 }}>
+            NO-PARKING GEO-FENCE &amp; DIGITAL CHALLAN ENFORCEMENT
+          </div>
         </div>
       </div>
 
-      {/* Right — Status Indicators + Clock */}
-      <div className="flex items-center gap-3">
-        {/* Live Stream Status */}
-        <div
-          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-[12px] font-medium"
-          style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}
-        >
-          <Radio className="w-3.5 h-3.5 text-primary-400" strokeWidth={1.8} />
-          <span className="text-slate-400">CAM-01</span>
-          <span className="flex items-center gap-1 text-primary-400">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulseSlow" />
-            LIVE
+      {/* Right: Status + Clock */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        {/* CAM LIVE */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 6,
+          padding: '5px 12px', borderRadius: 99,
+          background: 'rgba(34,211,238,0.07)',
+          border: '1px solid rgba(34,211,238,0.18)',
+        }}>
+          <span style={{
+            width: 6, height: 6, borderRadius: '50%',
+            background: '#22D3EE',
+            display: 'inline-block',
+            animation: 'blink 1.2s ease-in-out infinite',
+          }} />
+          <Wifi size={12} color="#22D3EE" strokeWidth={2} />
+          <span style={{ fontSize: 11, fontWeight: 600, color: '#22D3EE', letterSpacing: '0.06em' }}>
+            CAM-01 LIVE
           </span>
         </div>
 
-        {/* Model Status */}
-        <div
-          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-[12px] font-medium"
-          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
-        >
-          <Cpu className="w-3.5 h-3.5 text-slate-400" strokeWidth={1.8} />
-          <span className="text-slate-400">YOLO11 + ByteTrack</span>
-          <span className="text-slate-300 font-semibold">CPU</span>
+        {/* YOLO */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 6,
+          padding: '5px 12px', borderRadius: 99,
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(255,255,255,0.08)',
+        }}>
+          <Zap size={12} color="#71717A" strokeWidth={2} />
+          <span style={{ fontSize: 11, fontWeight: 500, color: '#71717A' }}>YOLO11 + ByteTrack</span>
         </div>
 
-        {/* Dwell Alert */}
-        <div
-          className="flex items-center gap-2 px-3 py-1.5 rounded-md text-[12px] font-semibold"
-          style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}
-        >
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-danger-500 animate-pulseSlow" />
-          <span className="text-danger-400">120s DWELL LIMIT</span>
+        {/* Dwell */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 6,
+          padding: '5px 12px', borderRadius: 99,
+          background: 'rgba(255,68,68,0.07)',
+          border: '1px solid rgba(255,68,68,0.18)',
+        }}>
+          <Activity size={12} color="#FF6B6B" strokeWidth={2} />
+          <span style={{ fontSize: 11, fontWeight: 700, color: '#FF6B6B', letterSpacing: '0.04em' }}>120s DWELL LIMIT</span>
         </div>
 
-        {/* Divider */}
-        <div className="w-px h-5 bg-white/10" />
+        <div style={{ width: 1, height: 18, background: 'rgba(255,255,255,0.08)' }} />
 
-        {/* Live Clock */}
-        <div className="flex items-center gap-2">
-          <Clock className="w-3.5 h-3.5 text-slate-600" strokeWidth={1.8} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Clock size={12} color="#52525B" strokeWidth={1.8} />
           <LiveClock />
         </div>
       </div>
