@@ -1,9 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background-color: #090d16;
-  color: #f1f5f9;
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #0B0F17;
+    color: #E2E8F0;
+    font-family: 'Inter', 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #111827;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.12);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.2);
+  }
+}
+
+@layer components {
+  /* Card Primitive */
+  .card {
+    @apply bg-base-800 rounded-lg shadow-card border border-white/[0.06];
+    background-image: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+  }
+
+  /* Section heading inside card */
+  .card-header {
+    @apply flex items-center justify-between px-5 py-3.5 border-b border-white/[0.06];
+  }
+
+  .card-title {
+    @apply flex items-center gap-2.5 text-[13px] font-semibold text-slate-200 uppercase tracking-widest;
+  }
+
+  /* Status pill component */
+  .pill {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium;
+  }
+
+  .pill-blue {
+    @apply pill bg-primary-950 text-primary-400 border border-primary-500/20;
+  }
+
+  .pill-red {
+    @apply pill bg-danger-950 text-danger-400 border border-danger-500/20;
+  }
+
+  .pill-green {
+    @apply pill bg-success-950 text-success-400 border border-success-500/20;
+  }
+
+  /* Monospace text */
+  .mono {
+    @apply font-mono text-[12px] tracking-tight;
+  }
+
+  /* Table base */
+  .data-table th {
+    @apply text-[11px] font-semibold uppercase tracking-widest text-slate-500 px-4 py-2.5 text-left;
+  }
+
+  .data-table td {
+    @apply text-[13px] text-slate-300 px-4 py-3;
+  }
+
+  .data-table tbody tr {
+    @apply border-t border-white/[0.04] transition-colors duration-100;
+  }
+
+  .data-table tbody tr:hover {
+    @apply bg-white/[0.03];
+  }
+
+  /* Shimmer skeleton */
+  .skeleton {
+    background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+    background-size: 400px 100%;
+    @apply animate-shimmer rounded;
+  }
+
+  /* Bounding box corner brackets */
+  .bb-corner {
+    @apply absolute w-4 h-4 border-primary-400;
+    border-width: 2px;
+  }
+  .bb-tl { @apply bb-corner top-0 left-0 border-r-0 border-b-0; }
+  .bb-tr { @apply bb-corner top-0 right-0 border-l-0 border-b-0; }
+  .bb-bl { @apply bb-corner bottom-0 left-0 border-r-0 border-t-0; }
+  .bb-br { @apply bb-corner bottom-0 right-0 border-l-0 border-t-0; }
+}
+
+@layer utilities {
+  .text-label {
+    @apply text-[11px] font-semibold uppercase tracking-widest text-slate-500;
+  }
+
+  .text-value {
+    @apply text-[13px] font-medium text-slate-100;
+  }
+
+  .border-subtle {
+    border-color: rgba(255,255,255,0.06);
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 16px rgba(59,130,246,0.25), 0 0 0 1px rgba(59,130,246,0.15);
+  }
 }
