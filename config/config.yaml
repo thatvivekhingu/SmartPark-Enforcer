@@ -1,0 +1,25 @@
+camera:
+  name: "Camera-01 (Main Gate No-Parking Bay)"
+  source: "videos/test_cctv.mp4"
+  fps: 10
+  location: "Terminal 1 Gate Entrance"
+
+geofence:
+  polygon:
+    - [300, 200]
+    - [980, 200]
+    - [980, 580]
+    - [300, 580]
+  dwell_time_threshold_seconds: 120
+
+models:
+  illegal_parking: "models/illegal_parking.pt"
+  plate_ocr: "models/plate_ocr.pt"
+  traffic: "models/traffic.pt"
+
+database:
+  path: "sqlite:///backend/smartpark.db"
+
+evidence:
+  violations_dir: "evidence/violations"
+  plates_dir: "evidence/plates"

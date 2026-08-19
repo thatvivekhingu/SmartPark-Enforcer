@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+venv/
+.venv/
+
+# Database
+*.db
+backend/smartpark.db
+
+# Models & Large Datasets
+models/*.pt
+models/onnx/*.onnx
+datasets/
+runs/
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+.DS_Store
+
+# OS / Antigravity
+.vscode/
+.idea/
+*.log
