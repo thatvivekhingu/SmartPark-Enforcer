@@ -10,8 +10,6 @@ engine = create_engine(DB_PATH, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-# --- SQLAlchemy ORM Models ---
-
 class VehicleModel(Base):
     __tablename__ = "vehicles"
     id = Column(Integer, primary_key=True, index=True)
@@ -62,9 +60,6 @@ class ChallanModel(Base):
     evidence_image = Column(String)
     status = Column(String, default="ISSUED")
 
-
-# --- Pydantic Schemas ---
-
 class ViolationSchema(BaseModel):
     id: int
     violation_id: str
@@ -80,7 +75,6 @@ class ViolationSchema(BaseModel):
     plate_image: str
     sha256_hash: str
     status: str
-
     class Config:
         from_attributes = True
 
@@ -95,12 +89,8 @@ class ChallanSchema(BaseModel):
     sha256_hash: str
     evidence_image: str
     status: str
-
     class Config:
         from_attributes = True
-
-
-# --- Database Helper Functions ---
 
 def init_db():
     Base.metadata.create_all(bind=engine)
@@ -112,12 +102,24 @@ def get_db():
     finally:
         db.close()
 
+def compute_sha256_from_files(file_paths: list) -> str:
+    hasher = hashlib.sha256()
+    for fp in file_paths:
+        if fp and __import__("os").path.exists(fp):
+            with open(fp, "rb") as f:
+                for chunk in iter(lambda: f.read(4096), b""):
+                    hasher.update(chunk)
+    return hasher.hexdigest()
+
 def generate_sha256_hash(violation_data: dict) -> str:
-    raw_payload = f"{violation_data.get('violation_id')}|{violation_data.get('vehicle_number')}|{violation_data.get('vehicle_type')}|{violation_data.get('timestamp')}|{violation_data.get('dwell_time')}|{violation_data.get('evidence_image')}"
-    return hashlib.sha256(raw_payload.encode("utf-8")).hexdigest()
+    evidence_file = violation_data.get("evidence_image", "")
+    plate_file = violation_data.get("plate_image", "")
+    root = __import__("pathlib").Path(__file__).resolve().parent.parent
+    ev_abs = str(root / evidence_file) if evidence_file else None
+    pl_abs = str(root / plate_file) if plate_file else None
+    return compute_sha256_from_files([ev_abs, pl_abs])
 
 def create_violation_and_challan(db, data: dict):
-    # Check duplicate violation for same track_id
     existing = db.query(ViolationModel).filter(ViolationModel.track_id == data["track_id"]).first()
     if existing:
         return existing, None

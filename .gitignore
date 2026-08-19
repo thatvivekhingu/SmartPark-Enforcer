@@ -25,3 +25,6 @@ frontend/dist/
 .vscode/
 .idea/
 *.log
+
+# Generated evidence files
+evidence/

@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { Receipt, ShieldCheck, Hash, Copy, Check, ImageOff } from 'lucide-react'
 
-/* Skeleton row */
+const API_BASE = import.meta.env.VITE_API_URL || ''
+
 function Skel({ w = 80 }) {
   return <div className="skeleton" style={{ height: 13, width: w, borderRadius: 3 }} />
 }
 
-/* Evidence placeholder */
 function EvidencePlaceholder() {
   return (
     <div style={{
@@ -17,22 +17,21 @@ function EvidencePlaceholder() {
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center', gap: 10,
     }}>
-      <div className="skeleton" style={{ width: 40, height: 40, borderRadius: 8 }}>
-        <ImageOff size={18} color="#3F3F46" style={{ margin: '11px auto', display: 'block' }} />
+      <div className="skeleton" style={{ width: 40, height: 40, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <ImageOff size={18} color="#3F3F46" />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
         <div className="skeleton" style={{ width: 100, height: 10 }} />
         <div className="skeleton" style={{ width: 72, height: 9, opacity: 0.6 }} />
       </div>
       <span style={{ fontSize: 11, color: '#3F3F46', fontWeight: 500, marginTop: 2 }}>
-        Capturing evidence…
+        Awaiting evidence capture...
       </span>
     </div>
   )
 }
 
-/* Info row */
-function Row({ label, value, mono = false, color = '#D4D4D8', loading = false }) {
+function Row({ label, value, mono = false, color = '#D4D4D8' }) {
   return (
     <div style={{
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
@@ -41,25 +40,21 @@ function Row({ label, value, mono = false, color = '#D4D4D8', loading = false })
       <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#52525B' }}>
         {label}
       </span>
-      {loading
-        ? <Skel />
-        : <span style={{
-            fontFamily: mono ? 'JetBrains Mono, monospace' : 'Inter, sans-serif',
-            fontSize: mono ? 12 : 13,
-            fontWeight: mono ? 600 : 500,
-            letterSpacing: mono ? '0.06em' : 0,
-            color,
-          }}>{value || '—'}</span>
-      }
+      <span style={{
+        fontFamily: mono ? 'JetBrains Mono, monospace' : 'Inter, sans-serif',
+        fontSize: mono ? 12 : 13,
+        fontWeight: mono ? 600 : 500,
+        letterSpacing: mono ? '0.06em' : 0,
+        color,
+      }}>{value || '--'}</span>
     </div>
   )
 }
 
-/* Copyable+expandable SHA-256 block */
 function HashBlock({ hash }) {
   const [exp, setExp] = useState(false)
   const [copied, setCopied] = useState(false)
-  const short = hash ? `${hash.slice(0, 10)}···${hash.slice(-10)}` : ''
+  const short = hash ? `${hash.slice(0, 10)}...${hash.slice(-10)}` : ''
 
   const copy = (e) => {
     e.stopPropagation()
@@ -113,24 +108,39 @@ function HashBlock({ hash }) {
 
 export default function DigitalChallanCard({ challan }) {
   const d = challan || {}
-  const challanId   = d.challan_id    || 'CHAL-20260819-01'
-  const violationId = d.violation_id  || 'VIOL-20260819-01'
-  const vehicleNum  = d.vehicle_number || 'MH12AB1234'
-  const fine        = d.fine_amount   || 500
-  const issuedAt    = d.issued_at     || '2026-08-19 22:45:12'
-  const sha256      = d.sha256_hash   || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
-  const hasEv       = !!d.evidence_image
+  const challanId   = d.challan_id    || null
+  const violationId = d.violation_id  || null
+  const vehicleNum  = d.vehicle_number || null
+  const fine        = d.fine_amount   || null
+  const issuedAt    = d.issued_at     || null
+  const sha256      = d.sha256_hash   || null
+  const evImage     = d.evidence_image || null
+  const hasEv       = !!evImage
+
+  if (!challanId && !violationId) {
+    return (
+      <div className="card animate-fadeUp" style={{ animationDelay: '140ms' }}>
+        <div className="card-header">
+          <div className="card-title">
+            <Receipt size={14} color="#F59E0B" strokeWidth={2} />
+            Digital Challan
+          </div>
+        </div>
+        <div style={{ padding: '32px 20px', textAlign: 'center' }}>
+          <span style={{ fontSize: 12, color: '#3F3F46' }}>No challan issued yet</span>
+          <p style={{ fontSize: 11, color: '#27272A', margin: '6px 0 0' }}>Challans appear here after a violation is confirmed</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="card animate-fadeUp" style={{ animationDelay: '140ms' }}>
-      {/* Header */}
       <div className="card-header">
         <div className="card-title">
           <Receipt size={14} color="#F59E0B" strokeWidth={2} />
           Digital Challan
         </div>
-
-        {/* Tamper-evident badge */}
         <div style={{
           display: 'flex', alignItems: 'center', gap: 5,
           padding: '3px 10px', borderRadius: 99,
@@ -147,19 +157,15 @@ export default function DigitalChallanCard({ challan }) {
         </div>
       </div>
 
-      {/* Body */}
       <div style={{ padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-        {/* Evidence + meta grid */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          {/* Evidence frame */}
           <div>
             {hasEv ? (
               <img
-                src={`/${d.evidence_image}`}
+                src={`${API_BASE}/${evImage}`}
                 alt="Evidence"
                 style={{ width: '100%', borderRadius: 6, objectFit: 'cover', display: 'block', border: '1px solid rgba(255,255,255,0.06)' }}
-                onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex' }}
+                onError={(e) => { e.target.style.display='none' }}
               />
             ) : null}
             <div style={{ display: hasEv ? 'none' : 'flex' }}>
@@ -167,24 +173,22 @@ export default function DigitalChallanCard({ challan }) {
             </div>
           </div>
 
-          {/* Metadata */}
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <Row label="Challan ID"   value={challanId}   mono color="#A1A1AA" />
             <Row label="Violation"    value={violationId}  mono color="#F59E0B" />
             <Row label="Vehicle No."  value={vehicleNum}   mono color="#FBBF24" />
-            <Row label="Fine"         value={`₹${fine}`}        color="#34D399" />
+            <Row label="Fine"         value={fine ? `\u20B9${fine}` : '--'} color="#34D399" />
             <Row label="Issued At"    value={issuedAt}     mono color="#71717A" />
           </div>
         </div>
 
-        {/* SHA-256 block */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <Hash size={12} color="#52525B" strokeWidth={1.8} />
             <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#52525B' }}>
               SHA-256 Hash Certificate
             </span>
-            <span style={{ marginLeft: 'auto', fontSize: 10, color: '#3F3F46' }}>Click to expand · →  to copy</span>
+            <span style={{ marginLeft: 'auto', fontSize: 10, color: '#3F3F46' }}>Click to expand | click + to copy</span>
           </div>
           <HashBlock hash={sha256} />
         </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import axios from 'axios'
 import Header from './components/Header'
 import LiveFeed from './components/LiveFeed'
@@ -6,11 +6,11 @@ import ActiveViolations from './components/ActiveViolations'
 import DigitalChallanCard from './components/DigitalChallanCard'
 import { Eye, ShieldAlert, Clock3, FileCheck } from 'lucide-react'
 
-/* ── Stat strip card ─────────────────────────────── */
+const API_BASE = import.meta.env.VITE_API_URL || ''
+
 function Stat({ icon: Icon, label, value, accent = '#F59E0B' }) {
   return (
     <div className="stat-box" style={{ flex: 1 }}>
-      {/* Glow blob */}
       <div style={{
         position: 'absolute', top: 0, right: 0,
         width: 60, height: 60,
@@ -38,43 +38,80 @@ function Stat({ icon: Icon, label, value, accent = '#F59E0B' }) {
   )
 }
 
-const DEFAULT_VIOLATIONS = [{
-  id: 1, violation_id: 'VIOL-20260819-01', track_id: 1,
-  vehicle_type: 'car', vehicle_number: 'MH12AB1234',
-  camera_id: 'CAM-01', location: 'No-Parking Bay 1',
-  timestamp: '2026-08-19 22:45:10', dwell_time: 125.0,
-  sha256_hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-  status: 'CONFIRMED',
-}]
-
-const DEFAULT_CHALLAN = {
-  id: 1, challan_id: 'CHAL-20260819-01', violation_id: 'VIOL-20260819-01',
-  vehicle_number: 'MH12AB1234', vehicle_type: 'car',
-  issued_at: '2026-08-19 22:45:12', fine_amount: 500,
-  sha256_hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-  status: 'ISSUED',
-}
-
 export default function App() {
-  const [violations, setViolations]       = useState(DEFAULT_VIOLATIONS)
-  const [latestChallan, setLatestChallan] = useState(DEFAULT_CHALLAN)
+  const [violations, setViolations] = useState([])
+  const [latestChallan, setLatestChallan] = useState(null)
+  const [stats, setStats] = useState({ tracked: 0, in_zone: 0, violations: 0, challans: 0 })
+  const [wsConnected, setWsConnected] = useState(false)
+  const wsRef = useRef(null)
+
+  const fetchData = useCallback(async () => {
+    try {
+      const [vR, cR, sR] = await Promise.allSettled([
+        axios.get(`${API_BASE}/api/violations`, { timeout: 5000 }),
+        axios.get(`${API_BASE}/api/challans/latest`, { timeout: 5000 }),
+        axios.get(`${API_BASE}/api/stats`, { timeout: 5000 }),
+      ])
+      if (vR.status === 'fulfilled' && Array.isArray(vR.value.data))
+        setViolations(vR.value.data)
+      if (cR.status === 'fulfilled' && cR.value.data)
+        setLatestChallan(cR.value.data)
+      if (sR.status === 'fulfilled' && sR.value.data)
+        setStats(sR.value.data)
+    } catch {}
+  }, [])
 
   useEffect(() => {
-    const fetch = async () => {
+    fetchData()
+    const id = setInterval(fetchData, 3000)
+    return () => clearInterval(id)
+  }, [fetchData])
+
+  useEffect(() => {
+    const wsUrl = (API_BASE || window.location.origin.replace(/:\d+$/, ':8000')).replace(/^http/, 'ws') + '/ws'
+    let ws = null
+    let reconnectTimer = null
+
+    function connect() {
       try {
-        const [vR, cR] = await Promise.allSettled([
-          axios.get('/api/violations',      { timeout: 2500 }),
-          axios.get('/api/challans/latest', { timeout: 2500 }),
-        ])
-        if (vR.status === 'fulfilled' && Array.isArray(vR.value.data) && vR.value.data.length)
-          setViolations(vR.value.data)
-        if (cR.status === 'fulfilled' && cR.value.data?.challan_id)
-          setLatestChallan(cR.value.data)
+        ws = new WebSocket(wsUrl)
+        wsRef.current = ws
+
+        ws.onopen = () => {
+          setWsConnected(true)
+          console.log('[WS] Connected')
+        }
+
+        ws.onmessage = (evt) => {
+          try {
+            const msg = JSON.parse(evt.data)
+            if (msg.event === 'VIOLATION_CREATED' && msg.data) {
+              setViolations(prev => {
+                const exists = prev.some(v => v.violation_id === msg.data.violation_id)
+                if (exists) return prev
+                return [msg.data, ...prev]
+              })
+              setLatestChallan(msg.data)
+            }
+            if (msg.event === 'pong') return
+          } catch {}
+        }
+
+        ws.onclose = () => {
+          setWsConnected(false)
+          reconnectTimer = setTimeout(connect, 3000)
+        }
+        ws.onerror = () => {
+          ws.close()
+        }
       } catch {}
     }
-    fetch()
-    const id = setInterval(fetch, 3000)
-    return () => clearInterval(id)
+
+    connect()
+    return () => {
+      if (ws) ws.close()
+      if (reconnectTimer) clearTimeout(reconnectTimer)
+    }
   }, [])
 
   return (
@@ -82,16 +119,13 @@ export default function App() {
       <Header />
 
       <main style={{ flex: 1, padding: '20px', maxWidth: 1440, margin: '0 auto', width: '100%' }}>
-
-        {/* ── Stats strip ──────────────────────────────────── */}
         <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
-          <Stat icon={Eye}        label="Tracked"   value={1}                   accent="#22D3EE" />
-          <Stat icon={Clock3}     label="In Zone"   value={1}                   accent="#F59E0B" />
-          <Stat icon={ShieldAlert} label="Violations" value={violations.length} accent="#FF4444" />
-          <Stat icon={FileCheck}  label="Challans"  value={violations.length}   accent="#34D399" />
+          <Stat icon={Eye}        label="Tracked"   value={stats.tracked}                   accent="#22D3EE" />
+          <Stat icon={Clock3}     label="In Zone"   value={stats.in_zone}                   accent="#F59E0B" />
+          <Stat icon={ShieldAlert} label="Violations" value={stats.violations}               accent="#FF4444" />
+          <Stat icon={FileCheck}  label="Challans"  value={stats.challans}                   accent="#34D399" />
         </div>
 
-        {/* ── Main 2-col layout ────────────────────────────── */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'minmax(0,1.5fr) minmax(0,1fr)',
@@ -100,18 +134,15 @@ export default function App() {
         }}
           className="responsive-grid"
         >
-          {/* Left: Live Feed */}
           <LiveFeed />
 
-          {/* Right: Violations + Challan */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <ActiveViolations violations={violations} />
-            <DigitalChallanCard challan={latestChallan} />
+            {latestChallan && <DigitalChallanCard challan={latestChallan} />}
           </div>
         </div>
       </main>
 
-      {/* Footer */}
       <footer style={{
         padding: '12px 24px',
         borderTop: '1px solid rgba(255,255,255,0.04)',
@@ -119,14 +150,13 @@ export default function App() {
         background: '#080808',
       }}>
         <span style={{ fontSize: 11, color: '#3F3F46' }}>
-          SmartPark-Enforcer AI v2.0 &bull; YOLO11 + ByteTrack + Shapely Polygon Geo-Fencing
+          SmartPark-Enforcer AI v3.0 &bull; YOLO11 + ByteTrack + EasyOCR + Shapely Geo-Fencing
         </span>
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#27272A' }}>
-          SHA-256 Tamper-Evident Challan System
+          WS: {wsConnected ? 'Connected' : 'Disconnected'} &bull; SHA-256 Evidence Integrity
         </span>
       </footer>
 
-      {/* Inline responsive override */}
       <style>{`
         @media (max-width: 900px) {
           .responsive-grid { grid-template-columns: 1fr !important; }
