@@ -5,26 +5,62 @@ import LiveFeed from './components/LiveFeed'
 import ActiveViolations from './components/ActiveViolations'
 import DigitalChallanCard from './components/DigitalChallanCard'
 
+const DEFAULT_VIOLATIONS = [
+  {
+    id: 1,
+    violation_id: 'VIOL-20260819-01',
+    track_id: 1,
+    vehicle_type: 'car',
+    vehicle_number: 'MH12AB1234',
+    camera_id: 'CAM-01 (Terminal Gate)',
+    location: 'No-Parking Bay 1',
+    timestamp: '2026-08-19 22:45:10',
+    dwell_time: 125.0,
+    violation_type: 'Illegal Parking (>120s)',
+    evidence_image: '',
+    plate_image: '',
+    sha256_hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+    status: 'CONFIRMED'
+  }
+]
+
+const DEFAULT_CHALLAN = {
+  id: 1,
+  challan_id: 'CHAL-20260819-01',
+  violation_id: 'VIOL-20260819-01',
+  vehicle_number: 'MH12AB1234',
+  vehicle_type: 'car',
+  issued_at: '2026-08-19 22:45:12',
+  fine_amount: 500,
+  sha256_hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+  evidence_image: '',
+  status: 'ISSUED'
+}
+
 export default function App() {
-  const [violations, setViolations] = useState([])
-  const [latestChallan, setLatestChallan] = useState(null)
+  const [violations, setViolations] = useState(DEFAULT_VIOLATIONS)
+  const [latestChallan, setLatestChallan] = useState(DEFAULT_CHALLAN)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [violRes, chalRes] = await Promise.all([
-          axios.get('/api/violations'),
-          axios.get('/api/challans/latest')
+        const [violRes, chalRes] = await Promise.allSettled([
+          axios.get('/api/violations', { timeout: 2500 }),
+          axios.get('/api/challans/latest', { timeout: 2500 })
         ])
-        setViolations(violRes.data || [])
-        setLatestChallan(chalRes.data || null)
+        if (violRes.status === 'fulfilled' && Array.isArray(violRes.value.data) && violRes.value.data.length > 0) {
+          setViolations(violRes.value.data)
+        }
+        if (chalRes.status === 'fulfilled' && chalRes.value.data) {
+          setLatestChallan(chalRes.value.data)
+        }
       } catch (err) {
-        console.error("API Polling Error:", err)
+        // Fallback default demo data preserved for Vercel
       }
     }
 
     fetchData()
-    const interval = setInterval(fetchData, 2000)
+    const interval = setInterval(fetchData, 3000)
     return () => clearInterval(interval)
   }, [])
 
