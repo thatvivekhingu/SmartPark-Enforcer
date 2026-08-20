@@ -1,188 +1,312 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { AlertTriangle, CheckCircle, Car, Clock, IndianRupee, Loader2, XCircle } from 'lucide-react';
+import React, { useState } from "react";
+import { 
+  AlertTriangle, 
+  CheckCircle, 
+  Car, 
+  Clock, 
+  IndianRupee, 
+  Loader2, 
+  XCircle, 
+  Edit3, 
+  ShieldCheck, 
+  EyeOff,
+  User,
+  MapPin,
+  FileText
+} from "lucide-react";
+
+export interface DetectionResultDetails {
+  plate: string;
+  isPlateDetected: boolean;
+  confidence: number;
+  vehicle_type: string;
+  vehicle_make: string;
+  vehicle_model: string;
+  vehicle_color: string;
+  owner_name: string;
+  parent_name: string;
+  owner_address: string;
+  mobile_no: string;
+  location: string;
+  dwell_minutes: number;
+  fine_amount: number;
+  original_image_url: string;
+}
 
 interface DetectionResultProps {
-  result: {
-    plate: string;
-    confidence: number;
-    vehicle_type: string;
-    dwell_minutes: number;
-    annotated_image_url?: string;
-    original_image_url: string;
-  };
+  result: DetectionResultDetails;
+  onUpdateResult: (updated: DetectionResultDetails) => void;
   onIssueChallan: () => void;
   onReject: () => void;
   isIssuing: boolean;
 }
 
-function confidenceColor(c: number): string {
-  if (c >= 0.85) return '#22C55E';
-  if (c >= 0.65) return '#F59E0B';
-  return '#EF4444';
-}
-
-function confidenceLabel(c: number): string {
-  if (c >= 0.85) return 'High';
-  if (c >= 0.65) return 'Medium';
-  return 'Low';
-}
-
-function formatDwell(minutes: number): string {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  if (h > 0) return `${h}h ${m}m`;
-  return `${m} minute${m !== 1 ? 's' : ''}`;
-}
-
-const VEHICLE_TYPE_LABELS: Record<string, string> = {
-  car: 'Car / SUV',
-  motorcycle: 'Motorcycle / Scooter',
-  truck: 'Truck / HGV',
-  bus: 'Bus',
-  auto: 'Auto Rickshaw',
-};
-
 export default function DetectionResult({
   result,
+  onUpdateResult,
   onIssueChallan,
   onReject,
   isIssuing,
 }: DetectionResultProps) {
-  const { plate, confidence, vehicle_type, dwell_minutes, annotated_image_url, original_image_url } = result;
-  const color = confidenceColor(confidence);
-  const pct = Math.round(confidence * 100);
-  const lowConfidence = confidence < 0.80;
-  const imageToShow = annotated_image_url ?? original_image_url;
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleChange = (field: keyof DetectionResultDetails, val: any) => {
+    onUpdateResult({
+      ...result,
+      [field]: val,
+    });
+  };
 
   return (
-    <div className="rounded-xl border border-white/10 bg-[#12151B] overflow-hidden">
-      {/* Low confidence warning */}
-      {lowConfidence && (
-        <div className="flex items-center gap-2.5 px-4 py-3 bg-[#F59E0B]/10 border-b border-[#F59E0B]/30">
-          <AlertTriangle className="w-4 h-4 text-[#F59E0B] flex-shrink-0" />
-          <p className="text-[#F59E0B] text-sm font-medium">
-            Low OCR confidence — verify plate manually before issuing challan.
-          </p>
+    <div className="rounded-xl border border-white/10 bg-[#12151B] overflow-hidden shadow-2xl space-y-0">
+      {/* Plate Status Warning/Notice Banner */}
+      {!result.isPlateDetected ? (
+        <div className="flex items-center gap-2.5 px-5 py-3 bg-red-500/10 border-b border-red-500/30 text-red-400 text-xs font-semibold">
+          <EyeOff className="w-4 h-4 text-red-400 flex-shrink-0" />
+          <span>
+            Number plate could not be clearly recognized from this photo. You can manually enter the plate or leave it as &quot;UNREADABLE&quot;.
+          </span>
+        </div>
+      ) : (
+        <div className="flex items-center justify-between px-5 py-2.5 bg-emerald-500/10 border-b border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+          <span className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            Vehicle & License Plate Successfully Recognized
+          </span>
+          <span className="font-mono bg-emerald-500/20 px-2 py-0.5 rounded text-[11px]">
+            {(result.confidence * 100).toFixed(0)}% OCR Confidence
+          </span>
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-        {/* LEFT — Evidence image */}
-        <div className="relative bg-black/40 flex items-center justify-center min-h-[280px] border-r border-white/7">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={imageToShow}
-            alt="Evidence photo with detection overlay"
-            className="w-full h-full object-contain"
-            style={{ maxHeight: '360px' }}
-          />
-          {/* Simulated bounding box overlay */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              left: '22%',
-              top: '52%',
-              width: '56%',
-              height: '18%',
-              border: '2px solid #4C6FFF',
-              borderRadius: '4px',
-              boxShadow: '0 0 0 1px rgba(76,111,255,0.3)',
-            }}
-          >
-            <span className="absolute -top-5 left-0 text-[10px] font-bold text-[#4C6FFF] bg-black/70 px-1 rounded">
-              PLATE
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
+        {/* LEFT COLUMN: Uploaded Photo Preview (5 cols) */}
+        <div className="lg:col-span-5 bg-black flex flex-col justify-between border-r border-white/10 p-4">
+          <div className="space-y-2">
+            <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider block">
+              Uploaded Violation Photo
             </span>
+            <div className="relative rounded-lg overflow-hidden border border-white/20 bg-neutral-900 aspect-video flex items-center justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={result.original_image_url}
+                alt="Uploaded violation evidence"
+                className="w-full h-full object-contain"
+              />
+              {result.isPlateDetected && (
+                <div className="absolute bottom-2 left-2 rounded bg-black/80 backdrop-blur px-2.5 py-1 text-[11px] font-mono text-yellow-400 border border-yellow-400/40">
+                  {result.plate}
+                </div>
+              )}
+            </div>
           </div>
-          <div className="absolute bottom-2 left-2 text-[10px] text-[#9096A3] bg-black/60 px-2 py-0.5 rounded">
-            Detection overlay (simulated)
+
+          <div className="pt-3 border-t border-white/10 text-[11px] text-neutral-400 space-y-1 font-mono">
+            <div className="flex justify-between">
+              <span>Dwell Duration:</span>
+              <span className="text-white font-bold">{result.dwell_minutes} Minutes</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Fine Amount:</span>
+              <span className="text-white font-bold">₹{result.fine_amount}</span>
+            </div>
           </div>
         </div>
 
-        {/* RIGHT — Detection details */}
-        <div className="p-6 flex flex-col gap-5">
-          {/* Detected Plate */}
-          <div>
-            <p className="text-xs text-[#5B6070] uppercase tracking-widest mb-1">Detected Plate</p>
-            <span className="font-mono text-3xl font-bold text-[#F59E0B] tracking-widest">{plate}</span>
-          </div>
-
-          {/* Confidence */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <p className="text-xs text-[#5B6070] uppercase tracking-widest">OCR Confidence</p>
-              <span className="text-sm font-semibold" style={{ color }}>
-                {pct}% — {confidenceLabel(confidence)}
-              </span>
-            </div>
-            <div className="h-2 w-full bg-[#191D25] rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all duration-700"
-                style={{ width: `${pct}%`, backgroundColor: color }}
-              />
-            </div>
-          </div>
-
-          {/* Vehicle Type */}
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-[#5B6070] uppercase tracking-widest">Vehicle Type</p>
-            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#4C6FFF]/15 border border-[#4C6FFF]/30 text-[#4C6FFF] text-sm font-medium">
-              <Car className="w-3.5 h-3.5" />
-              {VEHICLE_TYPE_LABELS[vehicle_type] ?? vehicle_type}
-            </span>
-          </div>
-
-          {/* Dwell Duration */}
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-[#5B6070] uppercase tracking-widest">Dwell Duration</p>
-            <span className="flex items-center gap-1.5 text-[#EDEEF1] text-sm font-medium">
-              <Clock className="w-3.5 h-3.5 text-[#9096A3]" />
-              {formatDwell(dwell_minutes)}
-            </span>
-          </div>
-
-          {/* Divider */}
-          <div className="border-t border-white/7" />
-
-          {/* Estimated Fine */}
-          <div className="flex items-center justify-between rounded-lg bg-[#191D25] px-4 py-3 border border-white/10">
+        {/* RIGHT COLUMN: Official Challan Fields & Manual Correction (7 cols) */}
+        <div className="lg:col-span-7 p-6 space-y-5">
+          <div className="flex items-center justify-between pb-3 border-b border-white/10">
             <div>
-              <p className="text-xs text-[#5B6070] uppercase tracking-widest mb-0.5">Estimated Fine</p>
-              <p className="text-xs text-[#9096A3]">Illegal Parking in No-Parking Zone</p>
+              <span className="text-[10px] uppercase tracking-widest text-neutral-400 block font-mono">
+                E-Challan Data Verification
+              </span>
+              <h3 className="text-base font-bold text-white">
+                Verify Citizen & Vehicle Details
+              </h3>
             </div>
-            <span className="flex items-center gap-1 text-2xl font-bold text-[#EDEEF1]">
-              <IndianRupee className="w-5 h-5" />
-              500
-            </span>
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              className="flex items-center gap-1.5 px-3 py-1 rounded bg-white/5 hover:bg-white/10 text-xs font-semibold text-neutral-200 border border-white/10 transition-colors"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+              {isEditing ? "Done Editing" : "Edit Details"}
+            </button>
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-3 mt-auto">
+          {/* Form Fields Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            {/* License Plate Field */}
+            <div className="p-3 rounded-lg bg-[#191D25] border border-white/10 space-y-1">
+              <label className="text-[10px] text-neutral-400 uppercase tracking-wider block font-semibold">
+                License Plate / Registration No.
+              </label>
+              {isEditing ? (
+                <div className="space-y-1.5">
+                  <input
+                    type="text"
+                    value={result.plate}
+                    onChange={(e) => handleChange("plate", e.target.value.toUpperCase())}
+                    className="w-full p-1.5 rounded bg-black/60 border border-white/20 text-yellow-400 font-mono font-bold text-sm focus:outline-none focus:border-blue-500 uppercase"
+                  />
+                  <label className="flex items-center gap-1.5 text-[10px] text-neutral-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={!result.isPlateDetected}
+                      onChange={(e) => {
+                        const notDetected = e.target.checked;
+                        onUpdateResult({
+                          ...result,
+                          isPlateDetected: !notDetected,
+                          plate: notDetected ? "NOT DETECTED" : "GJ01AB1234",
+                        });
+                      }}
+                      className="accent-blue-500"
+                    />
+                    Mark as &quot;Not Visible / Unreadable&quot;
+                  </label>
+                </div>
+              ) : (
+                <div className="text-base font-mono font-black text-yellow-400 tracking-wider">
+                  {result.plate}
+                </div>
+              )}
+            </div>
+
+            {/* Vehicle Model & Color */}
+            <div className="p-3 rounded-lg bg-[#191D25] border border-white/10 space-y-1">
+              <label className="text-[10px] text-neutral-400 uppercase tracking-wider block font-semibold">
+                Vehicle Make & Model
+              </label>
+              {isEditing ? (
+                <div className="flex gap-1.5">
+                  <input
+                    type="text"
+                    value={result.vehicle_make}
+                    onChange={(e) => handleChange("vehicle_make", e.target.value)}
+                    placeholder="Make (e.g. MARUTI SUZUKI)"
+                    className="w-1/2 p-1.5 rounded bg-black/60 border border-white/20 text-white font-medium text-xs uppercase"
+                  />
+                  <input
+                    type="text"
+                    value={result.vehicle_model}
+                    onChange={(e) => handleChange("vehicle_model", e.target.value)}
+                    placeholder="Model (e.g. SWIFT DZIRE)"
+                    className="w-1/2 p-1.5 rounded bg-black/60 border border-white/20 text-white font-medium text-xs uppercase"
+                  />
+                </div>
+              ) : (
+                <div className="text-xs font-bold text-white">
+                  {result.vehicle_make} {result.vehicle_model} ({result.vehicle_color})
+                </div>
+              )}
+            </div>
+
+            {/* Owner Name */}
+            <div className="p-3 rounded-lg bg-[#191D25] border border-white/10 space-y-1">
+              <label className="text-[10px] text-neutral-400 uppercase tracking-wider block font-semibold">
+                Registered Owner Name
+              </label>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={result.owner_name}
+                  onChange={(e) => handleChange("owner_name", e.target.value)}
+                  className="w-full p-1.5 rounded bg-black/60 border border-white/20 text-white font-medium text-xs uppercase"
+                />
+              ) : (
+                <div className="text-xs font-bold text-white">
+                  {result.owner_name}
+                </div>
+              )}
+            </div>
+
+            {/* Father/Husband Name */}
+            <div className="p-3 rounded-lg bg-[#191D25] border border-white/10 space-y-1">
+              <label className="text-[10px] text-neutral-400 uppercase tracking-wider block font-semibold">
+                Father / Husband Name
+              </label>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={result.parent_name}
+                  onChange={(e) => handleChange("parent_name", e.target.value)}
+                  className="w-full p-1.5 rounded bg-black/60 border border-white/20 text-white font-medium text-xs uppercase"
+                />
+              ) : (
+                <div className="text-xs font-bold text-white">
+                  {result.parent_name}
+                </div>
+              )}
+            </div>
+
+            {/* Violation Location */}
+            <div className="sm:col-span-2 p-3 rounded-lg bg-[#191D25] border border-white/10 space-y-1">
+              <label className="text-[10px] text-neutral-400 uppercase tracking-wider block font-semibold">
+                Location of Violation
+              </label>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={result.location}
+                  onChange={(e) => handleChange("location", e.target.value)}
+                  className="w-full p-1.5 rounded bg-black/60 border border-white/20 text-white font-medium text-xs uppercase"
+                />
+              ) : (
+                <div className="text-xs font-bold text-neutral-200">
+                  {result.location}
+                </div>
+              )}
+            </div>
+
+            {/* Owner Address */}
+            <div className="sm:col-span-2 p-3 rounded-lg bg-[#191D25] border border-white/10 space-y-1">
+              <label className="text-[10px] text-neutral-400 uppercase tracking-wider block font-semibold">
+                Registered Residential Address
+              </label>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={result.owner_address}
+                  onChange={(e) => handleChange("owner_address", e.target.value)}
+                  className="w-full p-1.5 rounded bg-black/60 border border-white/20 text-white font-medium text-xs uppercase"
+                />
+              ) : (
+                <div className="text-xs font-medium text-neutral-300">
+                  {result.owner_address}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 pt-3 border-t border-white/10">
             <button
               onClick={onIssueChallan}
               disabled={isIssuing}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#4C6FFF] hover:bg-[#3d5ce8] text-white font-semibold text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-all shadow-lg disabled:opacity-50"
             >
               {isIssuing ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Issuing…
+                  Generating Official E-Challan…
                 </>
               ) : (
                 <>
                   <CheckCircle className="w-4 h-4" />
-                  Issue Challan
+                  Generate Official E-Challan PDF
                 </>
               )}
             </button>
+
             <button
               onClick={onReject}
               disabled={isIssuing}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#EF4444]/50 text-[#EF4444] hover:bg-[#EF4444]/10 font-semibold text-sm transition-colors disabled:opacity-60"
+              className="flex items-center gap-1.5 px-4 py-3 rounded-lg border border-red-500/40 text-red-400 hover:bg-red-500/10 font-semibold text-xs transition-colors"
             >
               <XCircle className="w-4 h-4" />
-              Re-detect
+              Re-select Photo
             </button>
           </div>
         </div>
