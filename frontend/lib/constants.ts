@@ -17,12 +17,12 @@ export const FINE_AMOUNT = 500;
 
 export const NAV_ITEMS: NavItem[] = [
   { href: '/overview',    label: 'Overview',         icon: 'LayoutDashboard' },
-  { href: '/upload',      label: 'Upload Evidence',  icon: 'Upload' },
-  { href: '/violations',  label: 'Violations',        icon: 'AlertTriangle' },
+  { href: '/upload',      label: 'Data Hub',         icon: 'Upload' },
+  { href: '/violations',  label: 'Incidents',        icon: 'AlertTriangle' },
   { href: '/challans',    label: 'Challans',          icon: 'FileText' },
-  { href: '/cameras',     label: 'Cameras',           icon: 'Camera' },
+  { href: '/cameras',     label: 'Camera Network',   icon: 'Camera' },
   { href: '/analytics',  label: 'Analytics',         icon: 'BarChart2' },
-  { href: '/settings',   label: 'Settings',          icon: 'Settings' },
+  { href: '/settings',   label: 'Admin Settings',   icon: 'Settings' },
 ] as const;
 
 export const VIOLATION_TYPES = [

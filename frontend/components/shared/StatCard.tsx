@@ -1,138 +1,97 @@
-import { cn } from '@/lib/utils';
-import type { ReactNode } from 'react';
+"use client";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-type Accent = 'brand' | 'success' | 'warning' | 'danger';
-type DeltaType = 'up' | 'down' | 'neutral';
+import React from "react";
+import { cn } from "@/lib/utils";
 
 interface StatCardProps {
   label: string;
   value: string | number;
+  badge?: string;
+  badgeVariant?: "green" | "yellow" | "red" | "neutral";
   delta?: string;
-  deltaType?: DeltaType;
-  icon: ReactNode;
-  accent?: Accent;
+  deltaType?: "up" | "down" | "neutral" | string;
+  accent?: string;
+  icon?: React.ReactNode;
+  variant?: "cream" | "slate" | "navy";
   loading?: boolean;
 }
-
-// ─── Accent Config ────────────────────────────────────────────────────────────
-
-const ACCENT_CONFIG: Record<Accent, { iconBg: string; iconText: string; glow: string; border: string }> = {
-  brand: {
-    iconBg: 'bg-brand/10',
-    iconText: 'text-brand',
-    glow: 'hover:shadow-glow',
-    border: 'hover:border-brand/20',
-  },
-  success: {
-    iconBg: 'bg-success/10',
-    iconText: 'text-success',
-    glow: 'hover:shadow-glow-success',
-    border: 'hover:border-success/20',
-  },
-  warning: {
-    iconBg: 'bg-warning/10',
-    iconText: 'text-warning',
-    glow: '',
-    border: 'hover:border-warning/20',
-  },
-  danger: {
-    iconBg: 'bg-danger/10',
-    iconText: 'text-danger',
-    glow: 'hover:shadow-glow-danger',
-    border: 'hover:border-danger/20',
-  },
-};
-
-// ─── Delta Indicator ──────────────────────────────────────────────────────────
-
-function DeltaIndicator({ delta, type }: { delta: string; type: DeltaType }) {
-  return (
-    <div
-      className={cn(
-        'inline-flex items-center gap-1 text-xs font-medium',
-        type === 'up' && 'text-success',
-        type === 'down' && 'text-danger',
-        type === 'neutral' && 'text-text-muted'
-      )}
-    >
-      {type === 'up' && (
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="shrink-0">
-          <path d="M5 2L9 8H1L5 2Z" fill="currentColor" />
-        </svg>
-      )}
-      {type === 'down' && (
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="shrink-0">
-          <path d="M5 8L1 2H9L5 8Z" fill="currentColor" />
-        </svg>
-      )}
-      {type === 'neutral' && (
-        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" className="shrink-0">
-          <rect y="2" width="10" height="2" rx="1" fill="currentColor" />
-        </svg>
-      )}
-      <span>{delta}</span>
-    </div>
-  );
-}
-
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
-
-function StatCardSkeleton() {
-  return (
-    <div className="card p-5 flex flex-col gap-4">
-      <div className="flex items-start justify-between">
-        <div className="skeleton w-10 h-10 rounded-lg" />
-        <div className="skeleton w-16 h-4 rounded" />
-      </div>
-      <div>
-        <div className="skeleton w-24 h-8 rounded mb-2" />
-        <div className="skeleton w-32 h-3 rounded" />
-      </div>
-    </div>
-  );
-}
-
-// ─── StatCard ─────────────────────────────────────────────────────────────────
 
 export function StatCard({
   label,
   value,
+  badge,
+  badgeVariant = "green",
   delta,
-  deltaType = 'neutral',
+  deltaType = "up",
+  accent,
   icon,
-  accent = 'brand',
+  variant = "cream",
   loading = false,
 }: StatCardProps) {
-  if (loading) return <StatCardSkeleton />;
+  if (loading) {
+    return (
+      <div className="rounded-xl p-5 bg-[#F5EBE0] border border-[#E2E8F0] shadow-sm animate-pulse space-y-2">
+        <div className="h-3 w-20 bg-slate-300 rounded" />
+        <div className="h-8 w-16 bg-slate-400 rounded" />
+      </div>
+    );
+  }
 
-  const cfg = ACCENT_CONFIG[accent];
+  // Variant Styling (Cream/Light Beige vs Navy)
+  const isCream = variant === "cream";
+  const displayBadge = badge || (delta ? delta : undefined);
 
   return (
     <div
       className={cn(
-        'card p-5 flex flex-col gap-4 transition-all duration-200 cursor-default',
-        cfg.glow,
-        cfg.border
+        "rounded-xl p-5 flex flex-col justify-between transition-all duration-150 border shadow-sm",
+        isCream
+          ? "bg-[#F5EBE0] text-[#0F172A] border-[#E2D4C3] hover:border-[#D5C2AD]"
+          : "bg-[#1E293B] text-slate-100 border-[#334155] hover:border-slate-500"
       )}
     >
-      {/* Top row: icon + optional delta */}
-      <div className="flex items-start justify-between">
-        <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center shrink-0', cfg.iconBg)}>
-          <span className={cn('w-5 h-5 flex items-center justify-center', cfg.iconText)}>
-            {icon}
+      {/* Top Row: Label + Optional Badge / Icon */}
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <span
+          className={cn(
+            "text-[11px] font-black uppercase tracking-wider leading-none",
+            isCream ? "text-[#475569]" : "text-slate-400"
+          )}
+        >
+          {label}
+        </span>
+
+        {displayBadge && (
+          <span
+            className={cn(
+              "px-2 py-0.5 rounded-md text-[10px] font-bold tracking-tight shadow-2xs uppercase",
+              badgeVariant === "green" && "bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]",
+              badgeVariant === "yellow" && "bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]",
+              badgeVariant === "red" && "bg-[#FEE2E2] text-[#991B1B] border border-[#FECACA]",
+              badgeVariant === "neutral" && "bg-[#E2E8F0] text-[#475569] border border-[#CBD5E1]"
+            )}
+          >
+            {displayBadge}
           </span>
-        </div>
-        {delta && <DeltaIndicator delta={delta} type={deltaType} />}
+        )}
       </div>
 
-      {/* Bottom: value + label */}
-      <div>
-        <div className="stat-number mb-1">
-          {typeof value === 'number' ? value.toLocaleString('en-IN') : value}
+      {/* Value */}
+      <div className="flex items-baseline justify-between">
+        <div
+          className={cn(
+            "text-[30px] font-black tracking-tight leading-none font-sans",
+            isCream ? "text-[#0F172A]" : "text-slate-100"
+          )}
+        >
+          {typeof value === "number" ? value.toLocaleString("en-IN") : value}
         </div>
-        <div className="text-sm text-text-secondary leading-tight">{label}</div>
+
+        {icon && (
+          <div className={cn("p-1.5 rounded-lg", isCream ? "text-slate-600" : "text-slate-400")}>
+            {icon}
+          </div>
+        )}
       </div>
     </div>
   );

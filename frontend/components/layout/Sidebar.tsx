@@ -164,17 +164,17 @@ export function Sidebar() {
         )}
       >
         {/* Avatar */}
-        <div className="shrink-0 w-8 h-8 rounded-full bg-brand/20 border border-brand/30 flex items-center justify-center">
-          <span className="text-xs font-bold text-brand leading-none">TO</span>
+        <div className="shrink-0 w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
+          <span className="text-xs font-black text-amber-400 leading-none">004</span>
         </div>
 
         {!collapsed && (
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium text-text-primary truncate leading-tight">
-              Traffic Officer
+            <div className="text-xs font-bold text-slate-100 truncate leading-tight">
+              Traffic Officer | Inspector Sharma - Unit 004
             </div>
-            <div className="text-[11px] text-text-muted truncate leading-tight mt-0.5">
-              Senior Inspector
+            <div className="text-[10px] font-semibold text-slate-400 truncate leading-tight mt-0.5 uppercase tracking-wider">
+              Municipal Traffic Enforcement Unit
             </div>
           </div>
         )}
@@ -182,7 +182,7 @@ export function Sidebar() {
         {!collapsed && (
           <button
             title="Sign out"
-            className="shrink-0 p-1 rounded-md text-text-muted hover:text-danger hover:bg-danger/10 transition-colors duration-150"
+            className="shrink-0 p-1 rounded-md text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-colors duration-150"
           >
             <LogOut size={14} />
           </button>
