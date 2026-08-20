@@ -4,6 +4,12 @@
 
 ---
 
+## 🌐 LIVE DEPLOYED DASHBOARD
+
+* **Production Command Center**: [https://smart-park-enforcer-khaki.vercel.app/dashboard](https://smart-park-enforcer-khaki.vercel.app/dashboard)
+
+---
+
 ## 🚀 4 CORE CAPABILITIES
 
 1. **Real-Time Detection & ByteTrack Persistent Tracking**:
@@ -68,7 +74,7 @@ SmartPark-Enforcer/
 │   ├── batch_detect.py           # Multi-Video Batch Detection & Dataset Generator
 │   ├── database.py               # SQLite Schema (SQLAlchemy & Pydantic)
 │   └── requirements.txt          # Backend Dependencies
-├── frontend/                     # Streamlined React / Next.js Enforcement Dashboard
+├── frontend/                     # Next.js 14 Enforcement Dashboard
 │   ├── app/
 │   ├── components/
 │   └── package.json
