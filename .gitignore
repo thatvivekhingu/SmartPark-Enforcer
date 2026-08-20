@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.env
+*.env.local
 venv/
 .venv/
 
@@ -17,14 +18,16 @@ datasets/
 runs/
 
 # Node / Frontend
+node_modules/
 frontend/node_modules/
 frontend/dist/
+frontend/.next/
 .DS_Store
 
-# OS / Antigravity
+# OS / Logs
 .vscode/
 .idea/
 *.log
 
-# Generated evidence files
-evidence/
+# Large binary media (keep manifest)
+videos/*.mp4

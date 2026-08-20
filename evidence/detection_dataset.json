@@ -1,0 +1,175 @@
+{
+  "generated_at": "2026-08-19T18:45:28.404066",
+  "model_used": "illegal_parking.pt",
+  "total_videos_processed": 5,
+  "videos": [
+    {
+      "video_name": "parking_bay_3.mp4",
+      "resolution": "640x360",
+      "duration_seconds": 15.2,
+      "total_frames": 457,
+      "unique_vehicles_tracked": 11,
+      "total_detections_logged": 294,
+      "violations_logged": [
+        {
+          "violation_id": "VIOL-parking_bay_3-1",
+          "track_id": 1,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_parking_bay_3_tr1_20260819_184536.jpg",
+          "sha256_certificate": "ebb64060b3724e6aaa40fe5f07ad99b9feb497e8847d8aa4d5d72f59a5d80886"
+        }
+      ]
+    },
+    {
+      "video_name": "parking_cctv_1.mp4",
+      "resolution": "640x360",
+      "duration_seconds": 24.1,
+      "total_frames": 721,
+      "unique_vehicles_tracked": 8,
+      "total_detections_logged": 843,
+      "violations_logged": [
+        {
+          "violation_id": "VIOL-parking_cctv_1-18",
+          "track_id": 18,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_parking_cctv_1_tr18_20260819_184602.jpg",
+          "sha256_certificate": "8d740741b3b00cac073072e23e9ead273d46834da278d665d10beded4bc3bbf7"
+        },
+        {
+          "violation_id": "VIOL-parking_cctv_1-23",
+          "track_id": 23,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_parking_cctv_1_tr23_20260819_184606.jpg",
+          "sha256_certificate": "8d6fdf7c37b215041a30f22899bb596ee3387a74441ebd29f527df97165e605c"
+        },
+        {
+          "violation_id": "VIOL-parking_cctv_1-26",
+          "track_id": 26,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_parking_cctv_1_tr26_20260819_184610.jpg",
+          "sha256_certificate": "3e636f26d725782c25aff57a57f356f0b22703279cafe2f956f07cfbc57e814e"
+        },
+        {
+          "violation_id": "VIOL-parking_cctv_1-27",
+          "track_id": 27,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_parking_cctv_1_tr27_20260819_184616.jpg",
+          "sha256_certificate": "3829ea1b531009f209557709c7cca7bc31afbc3b4ca937fba2b9d5f1d635c78f"
+        },
+        {
+          "violation_id": "VIOL-parking_cctv_1-28",
+          "track_id": 28,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_parking_cctv_1_tr28_20260819_184626.jpg",
+          "sha256_certificate": "1214e838f37482cf020575bdafd27f8225bd4bd93feda03509fbc27e7bededb1"
+        }
+      ]
+    },
+    {
+      "video_name": "test_cctv.mp4",
+      "resolution": "1280x720",
+      "duration_seconds": 135.0,
+      "total_frames": 1350,
+      "unique_vehicles_tracked": 0,
+      "total_detections_logged": 0,
+      "violations_logged": []
+    },
+    {
+      "video_name": "traffic_junction_2.mp4",
+      "resolution": "480x360",
+      "duration_seconds": 28.7,
+      "total_frames": 688,
+      "unique_vehicles_tracked": 7,
+      "total_detections_logged": 109,
+      "violations_logged": []
+    },
+    {
+      "video_name": "youtube_test.mp4",
+      "resolution": "640x360",
+      "duration_seconds": 53.6,
+      "total_frames": 1608,
+      "unique_vehicles_tracked": 79,
+      "total_detections_logged": 1840,
+      "violations_logged": [
+        {
+          "violation_id": "VIOL-youtube_test-89",
+          "track_id": 89,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_youtube_test_tr89_20260819_184818.jpg",
+          "sha256_certificate": "8d757e4b98eb3b5b53c7ddcf9e2dc4102cb9f3fc24bdecaa38310020ab44d362"
+        },
+        {
+          "violation_id": "VIOL-youtube_test-94",
+          "track_id": 94,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_youtube_test_tr94_20260819_184819.jpg",
+          "sha256_certificate": "5aba60070934024a29f9f0e3c5dfc759dac1c6c57b2804f3c3533701a06c95a5"
+        },
+        {
+          "violation_id": "VIOL-youtube_test-157",
+          "track_id": 157,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_youtube_test_tr157_20260819_184839.jpg",
+          "sha256_certificate": "9e6ed73791c9a6f70ce2419a982134bd14d51ae6d1776d8b144a0ba9a06c8f8a"
+        },
+        {
+          "violation_id": "VIOL-youtube_test-161",
+          "track_id": 161,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_youtube_test_tr161_20260819_184841.jpg",
+          "sha256_certificate": "7695ae2531adb251c40bfc29cc714225c41f79fda2435cd0c3bd5aa2a859c1d9"
+        },
+        {
+          "violation_id": "VIOL-youtube_test-164",
+          "track_id": 164,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_youtube_test_tr164_20260819_184843.jpg",
+          "sha256_certificate": "555cfcfb8512cd860c4ca79ff597c79fb3eeee058b07ff6fdd804fcd2c9774c7"
+        },
+        {
+          "violation_id": "VIOL-youtube_test-1",
+          "track_id": 1,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_youtube_test_tr1_20260819_184909.jpg",
+          "sha256_certificate": "df44da9a78f6574ceee523c63111d65f7ef2a8cc70095debb0dbdd76e4ae416d"
+        },
+        {
+          "violation_id": "VIOL-youtube_test-209",
+          "track_id": 209,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_youtube_test_tr209_20260819_184918.jpg",
+          "sha256_certificate": "1064e8cda1ad252ff74f6345ee5da7b58cdf5e03a91a408aa895302472ab1ab8"
+        },
+        {
+          "violation_id": "VIOL-youtube_test-226",
+          "track_id": 226,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_youtube_test_tr226_20260819_184937.jpg",
+          "sha256_certificate": "627d601ee2edf9e4aa6e6a53b8e0b55f7fc855e0cc608dc000f21b233262d699"
+        },
+        {
+          "violation_id": "VIOL-youtube_test-249",
+          "track_id": 249,
+          "vehicle_type": "car",
+          "dwell_time_sec": 4.0,
+          "evidence_file": "violation_youtube_test_tr249_20260819_184942.jpg",
+          "sha256_certificate": "4574f1869a7d8734b93643802db1965af782bf431838678e016a441216f1e566"
+        }
+      ]
+    }
+  ]
+}
