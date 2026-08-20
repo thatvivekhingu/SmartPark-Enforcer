@@ -7,12 +7,12 @@ interface StatCardProps {
   label: string;
   value: string | number;
   badge?: string;
-  badgeVariant?: "green" | "yellow" | "red" | "neutral";
+  badgeVariant?: "green" | "yellow" | "red" | "neutral" | string;
   delta?: string;
   deltaType?: "up" | "down" | "neutral" | string;
   accent?: string;
   icon?: React.ReactNode;
-  variant?: "cream" | "slate" | "navy";
+  variant?: "cream" | "slate" | "navy" | string;
   loading?: boolean;
 }
 
@@ -25,50 +25,35 @@ export function StatCard({
   deltaType = "up",
   accent,
   icon,
-  variant = "cream",
   loading = false,
 }: StatCardProps) {
   if (loading) {
     return (
-      <div className="rounded-xl p-5 bg-[#F5EBE0] border border-[#E2E8F0] shadow-sm animate-pulse space-y-2">
-        <div className="h-3 w-20 bg-slate-300 rounded" />
-        <div className="h-8 w-16 bg-slate-400 rounded" />
+      <div className="rounded-2xl p-5 bg-white border border-black/[0.06] shadow-sm animate-pulse space-y-3">
+        <div className="h-3 w-24 bg-black/[0.06] rounded" />
+        <div className="h-8 w-16 bg-black/[0.1] rounded" />
       </div>
     );
   }
 
-  // Variant Styling (Cream/Light Beige vs Navy)
-  const isCream = variant === "cream";
   const displayBadge = badge || (delta ? delta : undefined);
 
   return (
-    <div
-      className={cn(
-        "rounded-xl p-5 flex flex-col justify-between transition-all duration-150 border shadow-sm",
-        isCream
-          ? "bg-[#F5EBE0] text-[#0F172A] border-[#E2D4C3] hover:border-[#D5C2AD]"
-          : "bg-[#1E293B] text-slate-100 border-[#334155] hover:border-slate-500"
-      )}
-    >
-      {/* Top Row: Label + Optional Badge / Icon */}
+    <div className="rounded-2xl p-5 bg-white border border-black/[0.06] shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] hover:border-black/[0.1] transition-all duration-200 flex flex-col justify-between">
+      {/* Top Row: Label + Badge */}
       <div className="flex items-center justify-between gap-2 mb-3">
-        <span
-          className={cn(
-            "text-[11px] font-black uppercase tracking-wider leading-none",
-            isCream ? "text-[#475569]" : "text-slate-400"
-          )}
-        >
+        <span className="text-xs font-semibold uppercase tracking-wider text-[#86868b]">
           {label}
         </span>
 
         {displayBadge && (
           <span
             className={cn(
-              "px-2 py-0.5 rounded-md text-[10px] font-bold tracking-tight shadow-2xs uppercase",
-              badgeVariant === "green" && "bg-[#DCFCE7] text-[#166534] border border-[#BBF7D0]",
-              badgeVariant === "yellow" && "bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]",
-              badgeVariant === "red" && "bg-[#FEE2E2] text-[#991B1B] border border-[#FECACA]",
-              badgeVariant === "neutral" && "bg-[#E2E8F0] text-[#475569] border border-[#CBD5E1]"
+              "px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-tight",
+              (badgeVariant === "green" || deltaType === "up") && "bg-[#34c759]/10 text-[#1e7e34]",
+              badgeVariant === "yellow" && "bg-[#ff9500]/10 text-[#b26a00]",
+              (badgeVariant === "red" || deltaType === "down") && "bg-[#ff3b30]/10 text-[#c72820]",
+              badgeVariant === "neutral" && "bg-black/[0.05] text-[#6e6e73]"
             )}
           >
             {displayBadge}
@@ -76,19 +61,14 @@ export function StatCard({
         )}
       </div>
 
-      {/* Value */}
+      {/* Bottom Row: Value + Icon */}
       <div className="flex items-baseline justify-between">
-        <div
-          className={cn(
-            "text-[30px] font-black tracking-tight leading-none font-sans",
-            isCream ? "text-[#0F172A]" : "text-slate-100"
-          )}
-        >
+        <div className="text-[32px] font-semibold tracking-tight text-[#1d1d1f] leading-none">
           {typeof value === "number" ? value.toLocaleString("en-IN") : value}
         </div>
 
         {icon && (
-          <div className={cn("p-1.5 rounded-lg", isCream ? "text-slate-600" : "text-slate-400")}>
+          <div className="p-2 rounded-xl bg-black/[0.03] text-[#0071E3]">
             {icon}
           </div>
         )}

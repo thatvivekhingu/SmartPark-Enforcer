@@ -3,43 +3,57 @@
 import React from "react";
 
 export function Logo({
-  size = 36,
+  size = 32,
   showText = true,
 }: {
   size?: number;
   showText?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-3">
-      {/* Official Ashoka Stambh / State Police Badge Emblem */}
-      <div 
-        className="shrink-0 flex items-center justify-center rounded-lg bg-gradient-to-b from-[#1E293B] to-[#0F172A] border border-[#334155] p-1.5 shadow-sm"
-        style={{ width: size, height: size }}
+    <div className="flex items-center gap-2.5">
+      {/* SmartPark Enforcer Geometric Monogram */}
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 32 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="SmartPark Enforcer logo"
+        className="shrink-0"
       >
-        <svg
-          viewBox="0 0 100 120"
+        {/* S vertical stem */}
+        <rect x="4" y="7" width="4" height="18" rx="1.5" fill="#0071E3" />
+        {/* S top bar */}
+        <rect x="4" y="7" width="13" height="4" rx="1.5" fill="#0071E3" />
+        {/* S middle bar */}
+        <rect x="4" y="14" width="11" height="4" rx="1.5" fill="#0071E3" />
+        {/* S bottom bar */}
+        <rect x="4" y="21" width="13" height="4" rx="1.5" fill="#0071E3" />
+        {/* P scan arc – outer */}
+        <path
+          d="M19 9 Q30 16 19 23"
+          stroke="#0071E3"
+          strokeWidth="3.2"
+          strokeLinecap="round"
           fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full text-[#F59E0B]"
-        >
-          {/* Ashoka Stambh / National Emblem Stylized Vectors */}
-          <path
-            d="M50 8 C40 8 36 18 36 28 C36 34 40 40 46 42 C34 44 24 54 24 68 C24 82 38 88 50 88 C62 88 76 82 76 68 C76 54 66 44 54 42 C60 40 64 34 64 28 C64 18 60 8 50 8 Z"
-            fill="currentColor"
-          />
-          <circle cx="50" cy="98" r="9" stroke="currentColor" strokeWidth="2.5" />
-          <path d="M50 89 V107 M41 98 H59" stroke="currentColor" strokeWidth="1.5" />
-          <rect x="18" y="110" width="64" height="6" rx="2" fill="currentColor" />
-        </svg>
-      </div>
+        />
+        {/* P scan arc – inner radar accent */}
+        <path
+          d="M22 12.5 Q28 16 22 19.5"
+          stroke="#34C759"
+          strokeWidth="2.6"
+          strokeLinecap="round"
+          fill="none"
+        />
+      </svg>
 
       {showText && (
-        <div className="flex flex-col leading-tight">
-          <span className="text-xs font-black tracking-wider text-[#F8FAFC] uppercase font-sans">
-            City Enforcement Dashboard
+        <div className="flex flex-col leading-none">
+          <span className="text-[15px] font-semibold text-[#1d1d1f] tracking-tight">
+            SmartPark
           </span>
-          <span className="text-[10px] font-bold text-[#94A3B8] tracking-widest uppercase mt-0.5">
-            Nagaland Traffic Unit · ICCC
+          <span className="text-[10px] font-semibold text-[#86868b] tracking-[0.16em] uppercase mt-0.5">
+            Enforcer
           </span>
         </div>
       )}

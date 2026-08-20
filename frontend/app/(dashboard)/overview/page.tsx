@@ -12,7 +12,8 @@ import {
   Clock, 
   ShieldCheck, 
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Sparkles
 } from "lucide-react";
 import { StatCard } from "@/components/shared/StatCard";
 import { StatusPill } from "@/components/shared/StatusPill";
@@ -29,7 +30,7 @@ interface Incident {
 const LIVE_INCIDENTS: Incident[] = [
   {
     id: 1,
-    plate: "NL01C7821",
+    plate: "NL 01 C 7821",
     location: "Street No-Parking Curb, Nagaland",
     status: "CONFIRMED",
     timeRecorded: "09:02 AM",
@@ -37,7 +38,7 @@ const LIVE_INCIDENTS: Incident[] = [
   },
   {
     id: 2,
-    plate: "MH12AB3456",
+    plate: "MH 12 AB 3456",
     location: "Junction Gate No-Stop Zone",
     status: "PENDING",
     timeRecorded: "08:45 AM",
@@ -45,7 +46,7 @@ const LIVE_INCIDENTS: Incident[] = [
   },
   {
     id: 3,
-    plate: "DL4CAF7789",
+    plate: "DL 04 CA 7789",
     location: "Market Road Restricted Area",
     status: "CONFIRMED",
     timeRecorded: "08:21 AM",
@@ -57,8 +58,8 @@ const RECENT_CHALLANS = [
   {
     id: 1,
     number: "GJ01TP5892615",
-    plate: "GJ01AB1234",
-    type: "Car (Swift Dzire)",
+    plate: "GJ 01 AB 1234",
+    type: "Car · Maruti Swift",
     zone: "C.G. Road, Ahmedabad",
     amount: 1000,
     time: "11:25 AM",
@@ -68,7 +69,7 @@ const RECENT_CHALLANS = [
     id: 2,
     number: "SPE-NL01C7821-001",
     plate: "NL 01 C 7821",
-    type: "Car (Maruti 800)",
+    type: "Car · Maruti 800",
     zone: "Street No-Parking Curb, Nagaland",
     amount: 500,
     time: "09:02 AM",
@@ -78,7 +79,7 @@ const RECENT_CHALLANS = [
     id: 3,
     number: "SPE-NL07B4419-002",
     plate: "NL 07 B 4419",
-    type: "SUV (Brezza)",
+    type: "SUV · Brezza",
     zone: "Commercial Bay No-Parking",
     amount: 500,
     time: "08:45 AM",
@@ -88,7 +89,7 @@ const RECENT_CHALLANS = [
     id: 4,
     number: "SPE-NL01A9310-003",
     plate: "NL 01 A 9310",
-    type: "SUV (Creta)",
+    type: "SUV · Creta",
     zone: "Junction Gate No-Parking",
     amount: 1000,
     time: "08:12 AM",
@@ -98,7 +99,7 @@ const RECENT_CHALLANS = [
     id: 5,
     number: "SPE-DL03CD4521-005",
     plate: "DL 03 CD 4521",
-    type: "Motorcycle (Pulsar)",
+    type: "Motorcycle · Pulsar",
     zone: "Market Road No-Parking",
     amount: 500,
     time: "07:30 AM",
@@ -110,93 +111,91 @@ export default function OverviewPage() {
   const router = useRouter();
 
   return (
-    <div className="p-6 space-y-6 min-h-screen text-slate-100 font-sans">
-      {/* ── 1. Page Header with Professional Serif Title ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#334155]">
+    <div className="p-8 space-y-8 min-h-screen text-[#1d1d1f] font-sans max-w-7xl mx-auto">
+      {/* ── 1. Page Header (Apple Clean Typography) ── */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <span className="text-[10px] font-bold text-amber-400 tracking-widest uppercase font-mono">
-            Integrated Command and Control Centre (ICCC)
+          <span className="text-xs font-semibold text-[#0071E3] tracking-wide uppercase">
+            Surveillance & Enforcement
           </span>
-          <h1 
-            className="text-2xl md:text-3xl font-black text-slate-100 tracking-tight mt-0.5"
-            style={{ fontFamily: "Georgia, Merriweather, serif" }}
-          >
+          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#1d1d1f] mt-1">
             Command Center
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Official Municipal Traffic Enforcement System · Nagaland Traffic Unit
+          <p className="text-sm text-[#86868b] mt-1">
+            Real-time automated traffic violation monitoring and citation management
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1E293B] border border-[#334155] text-xs font-mono text-slate-300">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            LIVE TELEMETRY FEED
-          </span>
+          <button
+            onClick={() => router.push("/upload")}
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-semibold shadow-sm transition-all"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Upload Evidence & Issue Challan
+          </button>
         </div>
       </div>
 
-      {/* ── 2. Top Stats Header Bar (Cream / Light Beige Cards) ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* ── 2. Top Stats Cards Grid (Apple Pure White Cards) ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard
-          label="Total Vehicles Inspected"
+          label="Total Vehicles Monitored"
           value={105}
-          badge="Low"
+          badge="Live"
           badgeVariant="green"
-          variant="cream"
-          icon={<Car className="w-5 h-5 text-slate-700" />}
+          icon={<Car className="w-5 h-5 text-[#0071E3]" />}
         />
 
         <StatCard
           label="Active Violations"
           value={3}
-          badge="Low"
-          badgeVariant="green"
-          variant="cream"
-          icon={<AlertTriangle className="w-5 h-5 text-slate-700" />}
+          badge="3 flagged"
+          badgeVariant="red"
+          icon={<AlertTriangle className="w-5 h-5 text-[#ff3b30]" />}
         />
 
         <StatCard
           label="Challans Issued"
           value={15}
-          badge="Normal"
+          badge="Today"
           badgeVariant="green"
-          variant="cream"
-          icon={<FileText className="w-5 h-5 text-slate-700" />}
+          icon={<FileText className="w-5 h-5 text-[#0071E3]" />}
         />
 
         <StatCard
-          label="OCR Accuracy"
+          label="AI OCR Accuracy"
           value="96.2%"
-          variant="cream"
-          icon={<Cpu className="w-5 h-5 text-slate-700" />}
+          badge="High"
+          badgeVariant="green"
+          icon={<Cpu className="w-5 h-5 text-[#34c759]" />}
         />
       </div>
 
-      {/* ── 3. Main Operational Grid: CCTV Panel (60%) + Incident Stream (40%) ── */}
+      {/* ── 3. Main Operations Grid: Video Feed + Live Incidents ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left: Municipal CCTV Feed Panel (7 cols) */}
-        <div className="lg:col-span-7 rounded-xl border border-[#334155] bg-[#1E293B] overflow-hidden shadow-md flex flex-col">
-          {/* Header */}
-          <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#334155] bg-[#0F172A]">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+        {/* Left: Live AI Surveillance Video Feed (7 cols) */}
+        <div className="lg:col-span-7 rounded-2xl border border-black/[0.06] bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#34c759] animate-pulse" />
               <div>
-                <h3 className="text-xs font-black uppercase tracking-wider text-slate-100 font-mono">
-                  MUNICIPAL CCTV FEED
+                <h3 className="text-sm font-semibold text-[#1d1d1f]">
+                  Live AI Detection Feed
                 </h3>
-                <p className="text-[11px] text-slate-400">
-                  Nagaland Street - Zone A | Active: Server 7
+                <p className="text-xs text-[#86868b]">
+                  CAM-01 · Nagaland Commercial Strip
                 </p>
               </div>
             </div>
-            <span className="text-[11px] font-mono text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
-              30 FPS · 640×360
+
+            <span className="px-3 py-1 rounded-full bg-black/[0.04] text-[11px] font-mono font-semibold text-[#6e6e73]">
+              30 FPS · 1080p Stream
             </span>
           </div>
 
-          {/* Video Container with Clean Cream/Yellow Badge Overlays */}
-          <div className="relative bg-black aspect-video flex-1 flex items-center justify-center overflow-hidden">
+          {/* Video Player */}
+          <div className="relative bg-black rounded-xl overflow-hidden aspect-video flex items-center justify-center shadow-inner">
             <video
               src="/videos/annotated_output.mp4"
               autoPlay
@@ -207,141 +206,127 @@ export default function OverviewPage() {
               className="w-full h-full object-contain"
             />
 
-            {/* Overlays (Cream / Yellow sharp badges per spec) */}
+            {/* Overlays */}
             <div className="absolute top-3 left-3 space-y-1.5 pointer-events-none z-10">
-              <div className="px-2.5 py-1 rounded bg-[#FEF08A]/95 text-[#78350F] text-[10px] font-mono font-black border border-[#FDE047] shadow-sm">
-                ILLEGAL PARKING #9 (TRUCK) | PLATE: NOT VISIBLE; TIMER: 00:01
-              </div>
-              <div className="px-2.5 py-1 rounded bg-[#FEF08A]/95 text-[#78350F] text-[10px] font-mono font-black border border-[#FDE047] shadow-sm">
-                ILLEGAL PARKING #10 (CAR) | PLATE: NOT VISIBLE; TIMER: 00:00
+              <div className="px-3 py-1 rounded-lg bg-white/95 backdrop-blur text-[#1d1d1f] text-[11px] font-mono font-bold shadow-md border border-black/[0.08]">
+                ILLEGAL PARKING · TIMER: 05:12
               </div>
             </div>
 
             <div className="absolute bottom-3 right-3 pointer-events-none">
-              <span className="px-2 py-0.5 rounded bg-black/80 text-[10px] font-mono text-slate-300 border border-white/10">
-                GEOFENCE: NO-PARKING CURB (300S)
+              <span className="px-2.5 py-1 rounded-md bg-black/75 backdrop-blur text-[10px] font-mono text-white/90">
+                ACTIVE GEOFENCE: 300S DWELL
               </span>
             </div>
           </div>
         </div>
 
-        {/* Right: Incident Stream Sidebar (5 cols) */}
-        <div className="lg:col-span-5 rounded-xl border border-[#334155] bg-[#1E293B] overflow-hidden shadow-md flex flex-col">
-          {/* Header */}
-          <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#334155] bg-[#0F172A]">
+        {/* Right: Real-time Incident Stream (5 cols) */}
+        <div className="lg:col-span-5 rounded-2xl border border-black/[0.06] bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.03)] flex flex-col space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-black/[0.06]">
             <div className="flex items-center gap-2">
-              <Radio className="w-4 h-4 text-red-400 animate-pulse" />
-              <h3 className="text-xs font-black uppercase tracking-wider text-slate-100 font-mono">
-                INCIDENT STREAM
+              <Radio className="w-4 h-4 text-[#ff3b30] animate-pulse" />
+              <h3 className="text-sm font-semibold text-[#1d1d1f]">
+                Active Incident Stream
               </h3>
             </div>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FEE2E2] text-[#991B1B] border border-[#FECACA]">
-              3 live
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#ff3b30]/10 text-[#c72820]">
+              3 active
             </span>
           </div>
 
           {/* Incidents List */}
-          <div className="divide-y divide-[#334155] flex-1">
+          <div className="divide-y divide-black/[0.06] flex-1">
             {LIVE_INCIDENTS.map((inc) => (
               <div
                 key={inc.id}
                 onClick={() => router.push(`/violations/${inc.id}`)}
-                className="p-4 hover:bg-[#273549] transition-colors cursor-pointer space-y-2 group"
+                className="py-3.5 first:pt-1 last:pb-1 hover:bg-black/[0.02] -mx-2 px-2 rounded-xl transition-colors cursor-pointer space-y-1.5"
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-sm font-black text-amber-400 bg-black/40 px-2 py-0.5 rounded border border-amber-400/30">
-                      {inc.plate}
-                    </span>
-                    <span className="text-[11px] font-mono text-slate-400">
-                      {inc.timeRecorded}
-                    </span>
-                  </div>
-
-                  {/* Soft Pastel Status Tag */}
+                  <span className="font-mono text-xs font-bold text-[#0071E3] bg-[#0071E3]/10 px-2 py-0.5 rounded-md">
+                    {inc.plate}
+                  </span>
                   <StatusPill status={inc.status} />
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-slate-300">
+                <div className="flex items-center justify-between text-xs text-[#6e6e73]">
                   <span className="truncate pr-2">{inc.location}</span>
-                  <span className="font-mono font-bold text-red-400 shrink-0">
-                    Dwell: {inc.dwell}
+                  <span className="font-mono font-semibold text-[#ff3b30] shrink-0">
+                    {inc.dwell}
                   </span>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Footer of Incidents Sidebar */}
-          <div className="p-3 bg-[#0F172A] border-t border-[#334155] text-center">
-            <button
-              onClick={() => router.push("/violations")}
-              className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center justify-center gap-1 w-full"
-            >
-              View Full Incident Register <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          <button
+            onClick={() => router.push("/violations")}
+            className="w-full py-2.5 rounded-xl bg-black/[0.03] hover:bg-black/[0.06] text-xs font-semibold text-[#1d1d1f] flex items-center justify-center gap-1.5 transition-colors"
+          >
+            View All Violations <ChevronRight className="w-3.5 h-3.5 text-[#86868b]" />
+          </button>
         </div>
       </div>
 
       {/* ── 4. Recent Citations & Challans Ledger Table ── */}
-      <div className="rounded-xl border border-[#334155] bg-[#1E293B] overflow-hidden shadow-md space-y-0">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#334155] bg-[#0F172A]">
+      <div className="rounded-2xl border border-black/[0.06] bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-4">
+        <div className="flex items-center justify-between pb-2 border-b border-black/[0.06]">
           <div>
-            <h3 className="text-xs font-black uppercase tracking-wider text-slate-100 font-mono">
-              RECENT CITATIONS & E-CHALLANS
+            <h3 className="text-base font-semibold text-[#1d1d1f]">
+              Recent Digital Challans
             </h3>
-            <p className="text-[11px] text-slate-400">
-              Electronic citations logged in the municipal judicial ledger
+            <p className="text-xs text-[#86868b] mt-0.5">
+              Verified citations issued through automated AI detection
             </p>
           </div>
           <button
             onClick={() => router.push("/challans")}
-            className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1"
+            className="text-xs font-semibold text-[#0071E3] hover:underline flex items-center gap-1"
           >
-            All Challans <ExternalLink className="w-3 h-3" />
+            View All Challans <ExternalLink className="w-3 h-3" />
           </button>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse font-sans">
+          <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-[#334155] bg-[#162032] text-slate-400 text-[11px] font-bold uppercase tracking-wider">
-                <th className="py-3 px-5">Challan Number</th>
-                <th className="py-3 px-5">Vehicle Plate</th>
-                <th className="py-3 px-5">Classification</th>
-                <th className="py-3 px-5">Enforcement Zone</th>
-                <th className="py-3 px-5">Penalty Fine</th>
-                <th className="py-3 px-5">Time</th>
-                <th className="py-3 px-5">Status</th>
+              <tr className="border-b border-black/[0.06] text-[#86868b] text-[11px] font-semibold uppercase tracking-wider">
+                <th className="py-3 px-4">Challan Number</th>
+                <th className="py-3 px-4">Vehicle Plate</th>
+                <th className="py-3 px-4">Vehicle Type</th>
+                <th className="py-3 px-4">Enforcement Zone</th>
+                <th className="py-3 px-4">Fine Amount</th>
+                <th className="py-3 px-4">Issued Time</th>
+                <th className="py-3 px-4">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#334155] text-xs">
+            <tbody className="divide-y divide-black/[0.04]">
               {RECENT_CHALLANS.map((c) => (
                 <tr
                   key={c.id}
                   onClick={() => router.push(`/challans/${c.id}`)}
-                  className="hover:bg-[#273549] cursor-pointer transition-colors"
+                  className="hover:bg-black/[0.02] cursor-pointer transition-colors group"
                 >
-                  <td className="py-3.5 px-5 font-mono font-bold text-blue-400">
+                  <td className="py-3.5 px-4 font-mono font-semibold text-[#0071E3]">
                     {c.number}
                   </td>
-                  <td className="py-3.5 px-5 font-mono font-black text-amber-300">
+                  <td className="py-3.5 px-4 font-mono font-bold text-[#1d1d1f]">
                     {c.plate}
                   </td>
-                  <td className="py-3.5 px-5 text-slate-300">
+                  <td className="py-3.5 px-4 text-[#6e6e73]">
                     {c.type}
                   </td>
-                  <td className="py-3.5 px-5 text-slate-300 truncate max-w-xs">
+                  <td className="py-3.5 px-4 text-[#6e6e73] truncate max-w-xs">
                     {c.zone}
                   </td>
-                  <td className="py-3.5 px-5 font-bold text-slate-100">
+                  <td className="py-3.5 px-4 font-semibold text-[#1d1d1f]">
                     ₹{c.amount}
                   </td>
-                  <td className="py-3.5 px-5 font-mono text-slate-400">
+                  <td className="py-3.5 px-4 font-mono text-[#86868b]">
                     {c.time}
                   </td>
-                  <td className="py-3.5 px-5">
+                  <td className="py-3.5 px-4">
                     <StatusPill status={c.status} />
                   </td>
                 </tr>

@@ -1,8 +1,7 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Upload,
@@ -15,12 +14,12 @@ import {
   ChevronRight,
   LogOut,
   type LucideIcon,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Logo } from '@/components/brand/Logo';
-import { NAV_ITEMS } from '@/lib/constants';
-
-// ─── Icon Map ─────────────────────────────────────────────────────────────────
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Logo } from "@/components/brand/Logo";
+import { NAV_ITEMS } from "@/lib/constants";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   LayoutDashboard,
@@ -31,11 +30,6 @@ const ICON_MAP: Record<string, LucideIcon> = {
   BarChart2,
   Settings,
 };
-
-// ─── Sidebar Store (inline Zustand) ──────────────────────────────────────────
-
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
 interface SidebarStore {
   collapsed: boolean;
@@ -50,11 +44,9 @@ export const useSidebarStore = create<SidebarStore>()(
       toggle: () => set((s) => ({ collapsed: !s.collapsed })),
       setCollapsed: (v) => set({ collapsed: v }),
     }),
-    { name: 'sp-sidebar' }
+    { name: "sp-sidebar" }
   )
 );
-
-// ─── Nav Item Component ───────────────────────────────────────────────────────
 
 interface NavItemProps {
   href: string;
@@ -72,35 +64,31 @@ function NavItemLink({ href, label, icon, collapsed, active }: NavItemProps) {
       href={href}
       title={collapsed ? label : undefined}
       className={cn(
-        'relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 group',
-        collapsed ? 'justify-center px-0 w-full' : '',
+        "relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group",
+        collapsed ? "justify-center px-0 w-full" : "",
         active
-          ? 'bg-brand/10 text-brand'
-          : 'text-text-secondary hover:bg-white/[0.04] hover:text-text-primary'
+          ? "bg-[#0071E3]/10 text-[#0071E3] font-semibold"
+          : "text-[#6e6e73] hover:bg-black/[0.04] hover:text-[#1d1d1f]"
       )}
     >
-      {/* Active accent bar */}
       {active && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-brand rounded-r-full" />
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3.5px] h-5 bg-[#0071E3] rounded-r-full" />
       )}
 
       <Icon
-        size={17}
+        size={18}
         strokeWidth={active ? 2.5 : 2}
         className={cn(
-          'shrink-0 transition-colors duration-150',
-          active ? 'text-brand' : 'text-text-muted group-hover:text-text-secondary'
+          "shrink-0 transition-colors duration-150",
+          active ? "text-[#0071E3]" : "text-[#86868b] group-hover:text-[#1d1d1f]"
         )}
       />
 
-      {!collapsed && (
-        <span className="truncate leading-none">{label}</span>
-      )}
+      {!collapsed && <span className="truncate leading-none">{label}</span>}
 
-      {/* Tooltip for collapsed mode */}
       {collapsed && (
         <div className="pointer-events-none absolute left-full ml-3 z-50 hidden group-hover:flex">
-          <div className="bg-elevated border border-white/[0.1] text-text-primary text-xs font-medium rounded-md px-2.5 py-1.5 whitespace-nowrap shadow-elevated">
+          <div className="bg-[#1d1d1f] text-white text-xs font-medium rounded-lg px-2.5 py-1.5 whitespace-nowrap shadow-md">
             {label}
           </div>
         </div>
@@ -109,8 +97,6 @@ function NavItemLink({ href, label, icon, collapsed, active }: NavItemProps) {
   );
 }
 
-// ─── Sidebar ──────────────────────────────────────────────────────────────────
-
 export function Sidebar() {
   const pathname = usePathname();
   const { collapsed, toggle } = useSidebarStore();
@@ -118,26 +104,26 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'relative flex flex-col shrink-0 h-screen bg-[#0A0B0E]/85 backdrop-blur-md border-r border-white/[0.07] transition-all duration-250 ease-smooth z-30',
-        collapsed ? 'w-16' : 'w-60'
+        "relative flex flex-col shrink-0 h-screen bg-white/90 backdrop-blur-xl border-r border-black/[0.06] transition-all duration-250 ease-smooth z-30",
+        collapsed ? "w-16" : "w-60"
       )}
     >
       {/* ── Logo ── */}
       <div
         className={cn(
-          'flex items-center h-[60px] shrink-0 border-b border-white/[0.07] px-4',
-          collapsed ? 'justify-center px-0' : ''
+          "flex items-center h-[60px] shrink-0 border-b border-black/[0.06] px-4",
+          collapsed ? "justify-center px-0" : ""
         )}
       >
         <Logo size={28} showText={!collapsed} />
       </div>
 
       {/* ── Navigation ── */}
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-0.5 no-scrollbar">
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-1 no-scrollbar">
         {NAV_ITEMS.map((item) => {
           const isActive =
-            item.href === '/overview'
-              ? pathname === '/overview' || pathname === '/'
+            item.href === "/overview"
+              ? pathname === "/overview" || pathname === "/"
               : pathname.startsWith(item.href);
 
           return (
@@ -159,22 +145,22 @@ export function Sidebar() {
       {/* ── User Profile ── */}
       <div
         className={cn(
-          'flex items-center gap-3 p-3 mx-2 my-2 rounded-lg hover:bg-white/[0.03] transition-colors duration-150',
-          collapsed ? 'justify-center mx-0 my-1 rounded-none' : ''
+          "flex items-center gap-3 p-2.5 mx-2 my-2 rounded-xl bg-black/[0.02] border border-black/[0.04] hover:bg-black/[0.04] transition-colors duration-150",
+          collapsed ? "justify-center mx-0 my-1 rounded-none border-0 bg-transparent" : ""
         )}
       >
         {/* Avatar */}
-        <div className="shrink-0 w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
-          <span className="text-xs font-black text-amber-400 leading-none">004</span>
+        <div className="shrink-0 w-8 h-8 rounded-full bg-[#0071E3]/15 border border-[#0071E3]/30 flex items-center justify-center">
+          <span className="text-xs font-bold text-[#0071E3] leading-none">TO</span>
         </div>
 
         {!collapsed && (
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-bold text-slate-100 truncate leading-tight">
-              Traffic Officer | Inspector Sharma - Unit 004
+            <div className="text-xs font-semibold text-[#1d1d1f] truncate leading-tight">
+              Traffic Officer
             </div>
-            <div className="text-[10px] font-semibold text-slate-400 truncate leading-tight mt-0.5 uppercase tracking-wider">
-              Municipal Traffic Enforcement Unit
+            <div className="text-[10px] text-[#86868b] truncate leading-tight mt-0.5 font-medium">
+              Senior Inspector
             </div>
           </div>
         )}
@@ -182,7 +168,7 @@ export function Sidebar() {
         {!collapsed && (
           <button
             title="Sign out"
-            className="shrink-0 p-1 rounded-md text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-colors duration-150"
+            className="shrink-0 p-1.5 rounded-lg text-[#86868b] hover:text-red-600 hover:bg-red-50 transition-colors duration-150"
           >
             <LogOut size={14} />
           </button>
@@ -192,12 +178,12 @@ export function Sidebar() {
       {/* ── Collapse Toggle ── */}
       <button
         onClick={toggle}
-        title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         className={cn(
-          'absolute -right-3 top-[72px] z-40',
-          'w-6 h-6 rounded-full bg-elevated border border-white/[0.1] shadow-elevated',
-          'flex items-center justify-center text-text-muted hover:text-text-primary hover:border-brand/40 hover:bg-brand/10',
-          'transition-all duration-150'
+          "absolute -right-3 top-[72px] z-40",
+          "w-6 h-6 rounded-full bg-white border border-black/[0.12] shadow-sm",
+          "flex items-center justify-center text-[#86868b] hover:text-[#1d1d1f] hover:border-[#0071E3] hover:bg-[#0071E3]/5",
+          "transition-all duration-150"
         )}
       >
         {collapsed ? (
@@ -209,3 +195,5 @@ export function Sidebar() {
     </aside>
   );
 }
+
+export default Sidebar;
