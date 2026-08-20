@@ -4,14 +4,6 @@
 
 ---
 
-## 🌐 LIVE DEPLOYMENT LINKS
-
-* **Primary Production Dashboard**: [https://frontend-eta-five-fw1ibd9ae3.vercel.app/](https://frontend-eta-five-fw1ibd9ae3.vercel.app/)
-* **Main Branch Deployment**: [https://frontend-git-main-vivek-hingu-s-projects.vercel.app/](https://frontend-git-main-vivek-hingu-s-projects.vercel.app/)
-* **Preview Deployment**: [https://frontend-1f3vgg3xc-vivek-hingu-s-projects.vercel.app/](https://frontend-1f3vgg3xc-vivek-hingu-s-projects.vercel.app/)
-
----
-
 ## 🚀 4 CORE CAPABILITIES
 
 1. **Real-Time Detection & ByteTrack Persistent Tracking**:
@@ -76,14 +68,9 @@ SmartPark-Enforcer/
 │   ├── batch_detect.py           # Multi-Video Batch Detection & Dataset Generator
 │   ├── database.py               # SQLite Schema (SQLAlchemy & Pydantic)
 │   └── requirements.txt          # Backend Dependencies
-├── frontend/                     # Streamlined React + Vite + Tailwind Dashboard
-│   ├── src/
-│   │   ├── App.jsx
-│   │   └── components/
-│   │       ├── Header.jsx
-│   │       ├── LiveFeed.jsx
-│   │       ├── ActiveViolations.jsx
-│   │       └── DigitalChallanCard.jsx
+├── frontend/                     # Streamlined React / Next.js Enforcement Dashboard
+│   ├── app/
+│   ├── components/
 │   └── package.json
 ├── evidence/
 │   ├── detection_dataset.json    # Full Structured Detection & Violation Manifest
@@ -104,7 +91,7 @@ python backend/main.py
 *API Base URL*: `http://localhost:8000`  
 *Live MJPEG Stream*: `http://localhost:8000/api/stream`
 
-### 2. Start React Enforcement Dashboard
+### 2. Start Enforcement Dashboard
 ```bash
 cd frontend
 npm install
