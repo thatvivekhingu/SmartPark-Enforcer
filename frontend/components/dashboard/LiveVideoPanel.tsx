@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Monitor, Maximize2, Shield, Video, PlayCircle, Radio } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Monitor, Maximize2, Shield, Video, PlayCircle, Radio, Play, Pause, RefreshCw } from "lucide-react";
 import { STREAM_URL } from "@/lib/constants";
 
 interface LiveVideoPanelProps {
@@ -19,7 +19,36 @@ export default function LiveVideoPanel({
   detectionInfo,
 }: LiveVideoPanelProps) {
   const [feedMode, setFeedMode] = useState<"ai_video" | "mjpeg">("ai_video");
+  const [isPlaying, setIsPlaying] = useState(true);
   const [videoError, setVideoError] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current && feedMode === "ai_video") {
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(() => {
+        setIsPlaying(false);
+      });
+    }
+  }, [feedMode]);
+
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (videoRef.current.paused) {
+      videoRef.current.play();
+      setIsPlaying(true);
+    } else {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const restartVideo = () => {
+    if (!videoRef.current) return;
+    videoRef.current.currentTime = 0;
+    videoRef.current.play();
+    setIsPlaying(true);
+  };
 
   return (
     <div className="rounded-card border border-border bg-app-card shadow-card overflow-hidden">
@@ -43,7 +72,7 @@ export default function LiveVideoPanel({
               onClick={() => setFeedMode("ai_video")}
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-medium transition-all ${
                 feedMode === "ai_video"
-                  ? "bg-accent-blue text-white shadow-sm"
+                  ? "bg-accent-blue text-white shadow-sm font-semibold"
                   : "text-text-muted hover:text-text-primary"
               }`}
             >
@@ -54,7 +83,7 @@ export default function LiveVideoPanel({
               onClick={() => setFeedMode("mjpeg")}
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-medium transition-all ${
                 feedMode === "mjpeg"
-                  ? "bg-accent-blue text-white shadow-sm"
+                  ? "bg-accent-blue text-white shadow-sm font-semibold"
                   : "text-text-muted hover:text-text-primary"
               }`}
             >
@@ -66,6 +95,13 @@ export default function LiveVideoPanel({
           <button
             className="rounded-badge p-1.5 text-text-muted transition-colors hover:text-text-primary hover:bg-app-elevated"
             aria-label="Fullscreen"
+            onClick={() => {
+              if (videoRef.current) {
+                if (videoRef.current.requestFullscreen) {
+                  videoRef.current.requestFullscreen();
+                }
+              }
+            }}
           >
             <Maximize2 className="h-4 w-4" strokeWidth={1.5} />
           </button>
@@ -73,19 +109,41 @@ export default function LiveVideoPanel({
       </div>
 
       {/* Main Video Viewport */}
-      <div className="relative aspect-video bg-[#08080a] overflow-hidden">
+      <div className="relative aspect-video bg-[#08080a] overflow-hidden group">
         {feedMode === "ai_video" ? (
-          /* Real YOLO11 Annotated Video Player (Looping MP4 with real bounding boxes) */
+          /* Web-Optimized H.264 MP4 with AutoPlay & Controls */
           <div className="relative w-full h-full">
             <video
+              ref={videoRef}
               src="/videos/annotated_output.mp4"
               autoPlay
               loop
               muted
               playsInline
-              controls
+              preload="auto"
+              controls={true}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
               className="w-full h-full object-cover"
             />
+
+            {/* Quick Play/Pause & Restart Overlay on Hover */}
+            <div className="absolute top-3 left-3 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-black/70 backdrop-blur-md p-1 rounded-badge border border-white/10">
+              <button
+                onClick={togglePlay}
+                className="p-1.5 rounded hover:bg-white/10 text-white transition-colors"
+                title={isPlaying ? "Pause" : "Play"}
+              >
+                {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+              </button>
+              <button
+                onClick={restartVideo}
+                className="p-1.5 rounded hover:bg-white/10 text-white transition-colors"
+                title="Restart Video"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+              </button>
+            </div>
 
             {/* Top Right Live AI Indicator */}
             <div className="absolute top-3 right-3 rounded-badge bg-black/80 backdrop-blur-md px-2.5 py-1 border border-white/10 flex items-center gap-2 text-[11px] font-mono pointer-events-none">
