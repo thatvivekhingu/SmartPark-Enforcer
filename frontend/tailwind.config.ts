@@ -9,9 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: '#0B0D12',
-        surface: '#12151B',
-        elevated: '#191D25',
+        ink: '#0A0B0E',
+        surface: '#131620',
+        elevated: '#1A1E2B',
         brand: '#4C6FFF',
         success: '#22C55E',
         warning: '#F59E0B',

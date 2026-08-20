@@ -12,11 +12,14 @@ import {
   Eye,
   Sliders,
   Settings,
-  Plus
+  Plus,
+  Map,
+  Compass,
+  Maximize2
 } from "lucide-react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StatCard } from "@/components/shared/StatCard";
-import type { Camera, CameraStatus } from "@/types";
+import type { Camera } from "@/types";
 
 const DEMO_CAMERAS: Camera[] = [
   {
@@ -63,13 +66,14 @@ const DEMO_CAMERAS: Camera[] = [
 
 export default function CamerasPage() {
   const [selectedCam, setSelectedCam] = useState<Camera | null>(DEMO_CAMERAS[0]);
+  const [activeTab, setActiveTab] = useState<"feed" | "geofence">("feed");
 
   return (
-    <div className="min-h-screen bg-ink text-text-primary p-6 space-y-6">
+    <div className="min-h-screen text-text-primary p-6 space-y-6">
       {/* Header */}
       <PageHeader
-        title="Camera Zones & Feeds"
-        description="Monitor surveillance cameras, Geo-Fence parameters, and automated detection status across municipal zones"
+        title="Camera Surveillance & Geofence Zones"
+        description="Monitor active CCTV nodes, configure polygon geofences, and adjust automated enforcement thresholds"
         breadcrumbs={[{ label: "Overview", href: "/overview" }, { label: "Cameras" }]}
       />
 
@@ -163,39 +167,100 @@ export default function CamerasPage() {
         <div className="rounded-xl border border-border bg-surface p-6 shadow-card space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-border">
             <div>
-              <span className="text-[10px] font-mono text-text-muted uppercase">Selected CCTV Feed</span>
+              <span className="text-[10px] font-mono text-text-muted uppercase">Surveillance Console</span>
               <h3 className="text-base font-bold text-text-primary">{selectedCam.name}</h3>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono text-text-secondary">Geo-Fence: 5-Min Dwell Limit</span>
+            
+            {/* View Mode Toggle */}
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-elevated border border-border">
+              <button
+                onClick={() => setActiveTab("feed")}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-medium transition-colors ${
+                  activeTab === "feed"
+                    ? "bg-brand text-white shadow-sm font-semibold"
+                    : "text-text-secondary hover:text-text-primary"
+                }`}
+              >
+                <Video className="w-3.5 h-3.5" />
+                Live Feed
+              </button>
+              <button
+                onClick={() => setActiveTab("geofence")}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-medium transition-colors ${
+                  activeTab === "geofence"
+                    ? "bg-brand text-white shadow-sm font-semibold"
+                    : "text-text-secondary hover:text-text-primary"
+                }`}
+              >
+                <Map className="w-3.5 h-3.5" />
+                Geofence Blueprint Editor
+              </button>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Video Player */}
-            <div className="lg:col-span-2 rounded-lg overflow-hidden border border-border bg-black aspect-video">
-              <video
-                src="/videos/annotated_output.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                controls
-                className="w-full h-full object-cover"
-              />
+            {/* Main Visual: Either Video Player or Blueprint Map Editor */}
+            <div className="lg:col-span-2 rounded-lg overflow-hidden border border-border bg-black aspect-video relative">
+              {activeTab === "feed" ? (
+                <video
+                  src="/videos/annotated_output.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  controls
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                /* Geofence Blueprint Schematic Grid (Site-survey map canvas) */
+                <div className="w-full h-full bg-schematic-grid flex flex-col items-center justify-center relative p-6 select-none">
+                  {/* Coordinate crosshair annotations */}
+                  <div className="absolute top-4 left-4 text-[10px] font-mono text-text-muted">
+                    GEO-COORDINATES: [25.9044° N, 93.7275° E] · EPSG:4326
+                  </div>
+                  <div className="absolute bottom-4 right-4 text-[10px] font-mono text-text-muted">
+                    SITE SURVEY GRID SCALE: 1 UNIT = 0.5M
+                  </div>
+
+                  {/* SVG Polygon Drawn Overlay */}
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                    <polygon
+                      points="120,80 480,95 560,320 80,300"
+                      fill="rgba(76,111,255,0.12)"
+                      stroke="#4C6FFF"
+                      strokeWidth="2"
+                      strokeDasharray="6 4"
+                    />
+                    <circle cx="120" cy="80" r="4" fill="#4C6FFF" />
+                    <circle cx="480" cy="95" r="4" fill="#4C6FFF" />
+                    <circle cx="560" cy="320" r="4" fill="#4C6FFF" />
+                    <circle cx="80" cy="300" r="4" fill="#4C6FFF" />
+                  </svg>
+
+                  <div className="text-center space-y-2 bg-surface/90 backdrop-blur border border-white/10 p-4 rounded-xl shadow-lg z-10 max-w-sm">
+                    <Compass className="w-6 h-6 text-brand mx-auto animate-spin-slow" />
+                    <h4 className="text-xs font-bold text-text-primary">
+                      Active Geofence: {selectedCam.zone_name}
+                    </h4>
+                    <p className="text-[11px] text-text-muted leading-relaxed">
+                      4-point polygon calibrated to sidewalk curb. Any vehicle stationary inside this boundary for &gt;300s triggers automatic citation.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Zone & Parameter Panel */}
             <div className="p-4 rounded-lg bg-elevated/40 border border-border space-y-4 text-xs font-mono">
               <span className="text-xs font-semibold font-sans text-text-primary flex items-center gap-1.5">
                 <Shield className="h-3.5 w-3.5 text-brand" />
-                Zone Configuration
+                Zone Parameters
               </span>
 
               <div className="space-y-2 text-text-secondary">
                 <div className="flex justify-between p-2 rounded bg-black/40">
                   <span>Zone Name:</span>
-                  <span className="text-text-primary">{selectedCam.zone_name}</span>
+                  <span className="text-text-primary font-sans">{selectedCam.zone_name}</span>
                 </div>
                 <div className="flex justify-between p-2 rounded bg-black/40">
                   <span>Camera Node:</span>
@@ -207,10 +272,10 @@ export default function CamerasPage() {
                 </div>
                 <div className="flex justify-between p-2 rounded bg-black/40">
                   <span>Fine Penalty:</span>
-                  <span className="text-text-primary font-bold">₹500</span>
+                  <span className="text-text-primary font-bold">₹500 / ₹1000</span>
                 </div>
                 <div className="flex justify-between p-2 rounded bg-black/40">
-                  <span>Model Backend:</span>
+                  <span>Inference:</span>
                   <span className="text-success font-semibold">YOLO11 + ByteTrack</span>
                 </div>
               </div>

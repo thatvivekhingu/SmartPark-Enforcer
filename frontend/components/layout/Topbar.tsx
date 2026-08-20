@@ -76,7 +76,7 @@ function NotificationBell({ unread = 3 }: { unread?: number }) {
 
 export function Topbar({ title, breadcrumbs }: TopbarProps) {
   return (
-    <header className="sticky top-0 z-20 flex items-center justify-between h-[60px] px-6 bg-surface/80 backdrop-blur-md border-b border-white/[0.07] shrink-0">
+    <header className="sticky top-0 z-20 flex items-center justify-between h-[60px] px-6 bg-[#0A0B0E]/80 backdrop-blur-md border-b border-white/[0.07] shrink-0">
       {/* ── Left: Title + Breadcrumbs ── */}
       <div className="flex flex-col justify-center min-w-0">
         {breadcrumbs && breadcrumbs.length > 0 && (

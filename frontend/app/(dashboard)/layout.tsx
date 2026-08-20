@@ -12,7 +12,7 @@ export default function DashboardLayout({
   const collapsed = useSidebarStore((s) => s.collapsed);
 
   return (
-    <div className="flex h-screen bg-ink overflow-hidden">
+    <div className="flex h-screen bg-transparent overflow-hidden">
       {/* Sidebar */}
       <Sidebar />
 

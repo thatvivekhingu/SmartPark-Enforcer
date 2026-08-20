@@ -4,9 +4,9 @@
 
 /* ─── Brand CSS Custom Properties ───────────────────────────────────────── */
 :root {
-  --color-ink: #0B0D12;
-  --color-surface: #12151B;
-  --color-elevated: #191D25;
+  --color-ink: #0A0B0E;
+  --color-surface: #131620;
+  --color-elevated: #1A1E2B;
   --color-brand: #4C6FFF;
   --color-success: #22C55E;
   --color-warning: #F59E0B;
@@ -45,7 +45,14 @@
   }
 
   body {
-    background-color: #0B0D12;
+    background-color: #0A0B0E;
+    background-image: 
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E"),
+      radial-gradient(1100px circle at 70% -15%, rgba(91, 124, 255, 0.06), transparent 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'%3E%3Cpath d='M64 0v256M128 0v256M192 0v256M0 64h256M0 128h256M0 192h256M0 0h256v256H0z' fill='none' stroke='rgba(255,255,255,0.025)' stroke-width='1'/%3E%3Cpath d='M58 128h12M64 122v12M186 64h12M192 58v12M122 192h12M128 186v12' stroke='rgba(255,255,255,0.04)' stroke-width='1'/%3E%3C/svg%3E");
+    background-repeat: repeat, no-repeat, repeat;
+    background-size: 256px 256px, 100% 100%, 256px 256px;
+    background-attachment: fixed;
     color: #EDEEF1;
     font-family: Inter, system-ui, sans-serif;
     font-size: 14px;
@@ -123,14 +130,20 @@
 
 /* ─── Component Layer ────────────────────────────────────────────────────── */
 @layer components {
-  /* Glass card */
+  /* Solid card (no background texture, only solid #131620) */
   .card {
-    @apply bg-surface border border-white/[0.07] rounded-xl shadow-card;
+    background-color: #131620;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.24);
   }
 
   /* Elevated card */
   .card-elevated {
-    @apply bg-elevated border border-white/[0.07] rounded-xl shadow-elevated;
+    background-color: #1A1E2B;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3);
   }
 
   /* Mono badge */
@@ -210,7 +223,7 @@
   .border-gradient {
     border: 1px solid transparent;
     background-clip: padding-box;
-    background-image: linear-gradient(#12151B, #12151B),
+    background-image: linear-gradient(#131620, #131620),
                       linear-gradient(135deg, rgba(76,111,255,0.3), rgba(255,255,255,0.05));
     background-origin: border-box;
   }
@@ -233,5 +246,15 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* Schematic Geofence Blueprint grid utility for empty canvas / map views */
+  .bg-schematic-grid {
+    background-color: #0A0B0E;
+    background-image: 
+      radial-gradient(800px circle at 50% 50%, rgba(91, 124, 255, 0.04), transparent 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M64 0H0V64' fill='none' stroke='rgba(255,255,255,0.035)' stroke-width='1'/%3E%3Cpath d='M30 32h4M32 30v4' stroke='rgba(255,255,255,0.06)' stroke-width='1'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, repeat;
+    background-size: 100% 100%, 64px 64px;
   }
 }
